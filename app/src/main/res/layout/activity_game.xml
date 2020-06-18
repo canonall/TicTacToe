@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context=".activity.GameActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/lines_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <View
+            android:id="@+id/line_horizontal_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/colorAccentDemo" />
+
+        <View
+            android:id="@+id/line_horizontal_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/line_horizontal_1"
+            android:layout_alignStart="@id/line_horizontal_1"
+            android:layout_alignEnd="@id/line_horizontal_1"
+            android:layout_marginTop="100dp"
+            android:background="@color/colorAccentDemo" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/lines_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <View
+            android:id="@+id/line_vertical_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="120dp"
+            android:layout_marginBottom="120dp"
+            android:background="@color/colorAccentDemo" />
+
+        <View
+            android:id="@+id/line_vertical_2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/line_vertical_1"
+            android:layout_alignBottom="@id/line_vertical_1"
+            android:layout_marginStart="110dp"
+            android:layout_toEndOf="@id/line_vertical_1"
+            android:background="@color/colorAccentDemo" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

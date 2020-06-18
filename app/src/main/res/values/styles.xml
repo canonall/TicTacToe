@@ -1,0 +1,19 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryDemo</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkDemo</item>
+        <item name="colorAccent">@color/colorAccentDemo</item>
+    </style>
+
+    <style name="tv_main">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/style_tv_background</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+</resources>
