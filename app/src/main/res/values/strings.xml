@@ -3,4 +3,7 @@
 
     <string name="start">Start</string>
     <string name="about">About</string>
+
+    <string name="x">X</string>
+    <string name="o">O</string>
 </resources>

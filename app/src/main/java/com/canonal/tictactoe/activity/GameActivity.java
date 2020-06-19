@@ -86,7 +86,8 @@ public class GameActivity extends AppCompatActivity {
         click(btn22);
     }
 
-    private void click(Button v){
+    private void click(Button btn) {
+        btn.setText(getResources().getString(R.string.x));
 
     }
 }
