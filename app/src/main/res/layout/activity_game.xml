@@ -8,57 +8,135 @@
     tools:context=".activity.GameActivity">
 
 
-    <RelativeLayout
-        android:id="@+id/lines_horizontal"
+    <TextView
+        android:id="@+id/tv_center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btn_00"
+        style="@style/btn_game"
+        android:layout_above="@id/line_horizontal_1"
+        android:layout_alignStart="@id/line_horizontal_1"
+        android:layout_alignTop="@id/line_vertical_1"
+        android:layout_toStartOf="@id/line_vertical_1" />
+
+    <Button
+        android:id="@+id/btn_01"
+        style="@style/btn_game"
+        android:layout_alignTop="@id/btn_00"
+        android:layout_alignBottom="@id/btn_00"
+        android:layout_marginStart="@dimen/button_margins_vertical"
+        android:layout_marginEnd="@dimen/button_margins_vertical"
+        android:layout_toStartOf="@id/line_vertical_2"
+        android:layout_toEndOf="@id/line_vertical_1" />
+
+    <Button
+        android:id="@+id/btn_02"
+        style="@style/btn_game"
+        android:layout_alignTop="@id/btn_00"
+        android:layout_alignEnd="@id/line_horizontal_1"
+        android:layout_alignBottom="@id/btn_00"
+        android:layout_toEndOf="@id/line_vertical_2" />
+
+    <Button
+        android:id="@+id/btn_10"
+        style="@style/btn_game"
+        android:layout_above="@id/line_horizontal_2"
+        android:layout_below="@id/line_horizontal_1"
+        android:layout_alignStart="@id/btn_00"
+        android:layout_alignEnd="@id/btn_00"
+        android:layout_marginTop="@dimen/button_margins_horizontal"
+        android:layout_marginBottom="@dimen/button_margins_horizontal" />
+
+    <Button
+        android:id="@+id/btn_11"
+        style="@style/btn_game"
+        android:layout_above="@id/line_horizontal_2"
+        android:layout_below="@id/line_horizontal_1"
+        android:layout_alignStart="@id/btn_01"
+        android:layout_alignEnd="@id/btn_01"
+        android:layout_marginTop="@dimen/button_margins_horizontal"
+        android:layout_marginBottom="@dimen/button_margins_horizontal" />
+
+    <Button
+        android:id="@+id/btn_12"
+        style="@style/btn_game"
+        android:layout_above="@id/line_horizontal_2"
+        android:layout_below="@id/line_horizontal_1"
+        android:layout_alignStart="@id/btn_02"
+        android:layout_alignEnd="@id/btn_02"
+        android:layout_marginTop="@dimen/button_margins_horizontal"
+        android:layout_marginBottom="@dimen/button_margins_horizontal" />
+
+    <Button
+        android:id="@+id/btn_20"
+        style="@style/btn_game"
+        android:layout_below="@id/line_horizontal_2"
+        android:layout_alignStart="@id/btn_00"
+        android:layout_alignEnd="@id/btn_00"
+        android:layout_alignBottom="@id/line_vertical_1" />
+
+    <Button
+        android:id="@+id/btn_21"
+        style="@style/btn_game"
+        android:layout_below="@id/line_horizontal_2"
+        android:layout_alignStart="@id/btn_01"
+        android:layout_alignEnd="@id/btn_01"
+        android:layout_alignBottom="@id/line_vertical_1" />
+
+    <Button
+        android:id="@+id/btn_22"
+        style="@style/btn_game"
+        android:layout_below="@id/line_horizontal_2"
+        android:layout_alignStart="@id/btn_02"
+        android:layout_alignEnd="@id/btn_02"
+        android:layout_alignBottom="@id/line_vertical_1" />
+
+
+    <View
+        android:id="@+id/line_horizontal_1"
         android:layout_width="match_parent"
+        android:layout_height="0.6dp"
+        android:layout_above="@id/tv_center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="@dimen/horizontal_line_margins"
+        android:background="@color/colorAccentDemo" />
+
+
+    <View
+        android:id="@+id/line_horizontal_2"
+        android:layout_width="match_parent"
+        android:layout_height="0.6dp"
+        android:layout_below="@id/tv_center"
+        android:layout_alignStart="@id/line_horizontal_1"
+        android:layout_alignEnd="@id/line_horizontal_1"
+        android:layout_marginTop="@dimen/horizontal_line_margins"
+        android:background="@color/colorAccentDemo" />
+
+
+    <View
+        android:id="@+id/line_vertical_1"
+        android:layout_width="0.6dp"
         android:layout_height="match_parent"
-        android:gravity="center">
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="@dimen/vertical_line_margins"
+        android:layout_marginBottom="120dp"
+        android:layout_toStartOf="@id/tv_center"
+        android:background="@color/colorAccentDemo" />
 
-        <View
-            android:id="@+id/line_horizontal_1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@color/colorAccentDemo" />
-
-        <View
-            android:id="@+id/line_horizontal_2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/line_horizontal_1"
-            android:layout_alignStart="@id/line_horizontal_1"
-            android:layout_alignEnd="@id/line_horizontal_1"
-            android:layout_marginTop="100dp"
-            android:background="@color/colorAccentDemo" />
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/lines_vertical"
-        android:layout_width="match_parent"
+    <View
+        android:id="@+id/line_vertical_2"
+        android:layout_width="0.6dp"
         android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <View
-            android:id="@+id/line_vertical_1"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="120dp"
-            android:layout_marginBottom="120dp"
-            android:background="@color/colorAccentDemo" />
-
-        <View
-            android:id="@+id/line_vertical_2"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_alignTop="@id/line_vertical_1"
-            android:layout_alignBottom="@id/line_vertical_1"
-            android:layout_marginStart="110dp"
-            android:layout_toEndOf="@id/line_vertical_1"
-            android:background="@color/colorAccentDemo" />
-
-    </RelativeLayout>
+        android:layout_alignTop="@id/line_vertical_1"
+        android:layout_alignBottom="@id/line_vertical_1"
+        android:layout_marginStart="@dimen/vertical_line_margins"
+        android:layout_toEndOf="@id/tv_center"
+        android:background="@color/colorAccentDemo" />
 
 
 </RelativeLayout>

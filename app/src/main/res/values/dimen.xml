@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="horizontal_line_margins">52dp</dimen>
+    <dimen name="button_margins_horizontal">-52dp</dimen>
+
+    <dimen name="vertical_line_margins">50dp</dimen>
+    <dimen name="button_margins_vertical">-50dp</dimen>
+
+
+</resources>
