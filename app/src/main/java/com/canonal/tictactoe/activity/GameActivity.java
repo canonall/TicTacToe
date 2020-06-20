@@ -1,18 +1,23 @@
 package com.canonal.tictactoe.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
+import androidx.annotation.LongDef;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.canonal.tictactoe.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GameActivity extends AppCompatActivity {
-
 
     @BindView(R.id.btn_00)
     Button btn00;
@@ -32,6 +37,9 @@ public class GameActivity extends AppCompatActivity {
     Button btn21;
     @BindView(R.id.btn_22)
     Button btn22;
+
+    private int roundCount = 0;
+    private boolean player1Turn = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +95,114 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void click(Button btn) {
-        btn.setText(getResources().getString(R.string.x));
+
+        if (player1Turn) {
+
+            btn.setTextColor(getResources().getColor(R.color.colorAccent));
+            btn.setText(getResources().getString(R.string.x));
+
+        } else {
+
+            btn.setTextColor(getResources().getColor(R.color.colorAccentDemo));
+            btn.setText(getResources().getString(R.string.o));
+
+        }
+
+        roundCount++;
+
+        //Check winner after  round 5
+        //Before that nobody can win
+        if (roundCount >= 5) {
+
+            //check if there is a winner
+            if (checkForWin()) {
+                pronounceWinner(player1Turn);
+            }
+            //if roundCount is 9, then draw
+            //else continue;
+            else if (roundCount == 9) {
+                callDraw();
+            }
+
+        }
+
+        //change player turn
+        player1Turn = !player1Turn;
+    }
+
+
+    private boolean checkForWin() {
+
+        String[][] buttonStatus = new String[3][3];
+
+        buttonStatus[0][0] = btn00.getText().toString();
+        buttonStatus[0][1] = btn01.getText().toString();
+        buttonStatus[0][2] = btn02.getText().toString();
+        buttonStatus[1][0] = btn10.getText().toString();
+        buttonStatus[1][1] = btn11.getText().toString();
+        buttonStatus[1][2] = btn12.getText().toString();
+        buttonStatus[2][0] = btn20.getText().toString();
+        buttonStatus[2][1] = btn21.getText().toString();
+        buttonStatus[2][2] = btn22.getText().toString();
+
+        //there are eight different positions to end the game
+        //3 rows
+        //3 column
+        //2 diagonal
+
+        //check all rows
+        for (int i = 0; i < 3; i++) {
+            if (buttonStatus[i][0].equals(buttonStatus[i][1])
+                    && buttonStatus[i][0].equals(buttonStatus[i][2])
+                    && !buttonStatus[i][0].equals("")) {
+                return true;
+            }
+        }
+
+        //check all columns
+        for (int i = 0; i < 3; i++) {
+            if (buttonStatus[0][i].equals(buttonStatus[1][i])
+                    && buttonStatus[0][i].equals(buttonStatus[2][i])
+                    && !buttonStatus[0][i].equals("")) {
+                return true;
+            }
+        }
+
+        //check first diagonal
+        if (buttonStatus[0][0].equals(buttonStatus[1][1])
+                && buttonStatus[0][0].equals(buttonStatus[2][2])
+                && !buttonStatus[0][0].equals("")) {
+            return true;
+        }
+
+        //check second diagonal
+        if (buttonStatus[0][2].equals(buttonStatus[1][1])
+                && buttonStatus[0][2].equals(buttonStatus[2][0])
+                && !buttonStatus[0][2].equals("")) {
+            return true;
+        }
+
+        //no winners
+        return false;
+    }
+
+    private void pronounceWinner(boolean player1Turn) {
+
+        if (player1Turn){
+            //player1 wins
+            Toast.makeText(this,"Player 1", Toast.LENGTH_LONG).show();
+            //TODO Finish game
+        }else {
+            //player2 wins
+            Toast.makeText(this,"Player 2", Toast.LENGTH_LONG).show();
+            //TODO Finish game
+        }
+    }
+
+    private void callDraw() {
+        Toast.makeText(this,"DRAW", Toast.LENGTH_LONG).show();
+        //TODO Finish game
 
     }
+
 }
