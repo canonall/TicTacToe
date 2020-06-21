@@ -7,6 +7,15 @@
     android:background="@color/colorBackground"
     tools:context=".activity.GameActivity">
 
+    <TextView
+        android:id="@+id/tv_winner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_00"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:textSize="@dimen/tv_winner_text_size"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_center"
@@ -104,7 +113,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="@dimen/horizontal_line_margins"
-        android:background="@color/colorAccentDemo" />
+        android:background="@color/drawGray" />
 
 
     <View
@@ -115,7 +124,7 @@
         android:layout_alignStart="@id/line_horizontal_1"
         android:layout_alignEnd="@id/line_horizontal_1"
         android:layout_marginTop="@dimen/horizontal_line_margins"
-        android:background="@color/colorAccentDemo" />
+        android:background="@color/drawGray" />
 
 
     <View
@@ -126,7 +135,7 @@
         android:layout_marginEnd="@dimen/vertical_line_margins"
         android:layout_marginBottom="120dp"
         android:layout_toStartOf="@id/tv_center"
-        android:background="@color/colorAccentDemo" />
+        android:background="@color/drawGray" />
 
     <View
         android:id="@+id/line_vertical_2"
@@ -136,7 +145,17 @@
         android:layout_alignBottom="@id/line_vertical_1"
         android:layout_marginStart="@dimen/vertical_line_margins"
         android:layout_toEndOf="@id/tv_center"
-        android:background="@color/colorAccentDemo" />
+        android:background="@color/drawGray" />
 
+    <TextView
+        android:id="@+id/tv_play_again"
+        style="@style/tv_main"
+        android:layout_below="@id/btn_20"
+        android:layout_alignStart="@id/line_horizontal_1"
+        android:layout_alignEnd="@id/line_horizontal_1"
+        android:layout_marginTop="50dp"
+        android:text="@string/play_again"
+        android:textSize="@dimen/tv_play_again_text_size"
+        android:visibility="gone" />
 
 </RelativeLayout>

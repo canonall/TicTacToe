@@ -10,6 +10,6 @@
 
 
     <color name="colorBackground">#32323B</color>
-    <color name="o">#30D7D7</color>
+    <color name="drawGray">#B3B6B7</color>
 
 </resources>

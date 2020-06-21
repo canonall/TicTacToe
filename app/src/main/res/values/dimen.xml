@@ -6,5 +6,9 @@
     <dimen name="vertical_line_margins">50dp</dimen>
     <dimen name="button_margins_vertical">-50dp</dimen>
 
+    <dimen name="tv_winner_text_size">25sp</dimen>
+    <dimen name="tv_play_again_text_size">18sp</dimen>
+    <dimen name="btn_text_size">40sp</dimen>
+
 
 </resources>

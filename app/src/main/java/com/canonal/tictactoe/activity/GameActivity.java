@@ -1,17 +1,13 @@
 package com.canonal.tictactoe.activity;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import androidx.annotation.LongDef;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.canonal.tictactoe.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +33,10 @@ public class GameActivity extends AppCompatActivity {
     Button btn21;
     @BindView(R.id.btn_22)
     Button btn22;
+    @BindView(R.id.tv_winner)
+    TextView tvWinner;
+    @BindView(R.id.tv_play_again)
+    TextView tvPlayAgain;
 
     private int roundCount = 0;
     private boolean player1Turn = true;
@@ -47,7 +47,6 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         ButterKnife.bind(this);
     }
-
 
     @OnClick(R.id.btn_00)
     public void onBtn00Clicked() {
@@ -188,21 +187,103 @@ public class GameActivity extends AppCompatActivity {
 
     private void pronounceWinner(boolean player1Turn) {
 
-        if (player1Turn){
+        if (player1Turn) {
             //player1 wins
-            Toast.makeText(this,"Player 1", Toast.LENGTH_LONG).show();
-            //TODO Finish game
-        }else {
+            tvWinner.setText(getResources().getString(R.string.player1_wins));
+            tvWinner.setTextColor(getResources().getColor(R.color.colorAccent));
+
+        } else {
             //player2 wins
-            Toast.makeText(this,"Player 2", Toast.LENGTH_LONG).show();
-            //TODO Finish game
+            tvWinner.setText(getResources().getString(R.string.player2_wins));
+            tvWinner.setTextColor(getResources().getColor(R.color.colorAccentDemo));
+
         }
+
+        disableButtons();
+        makeRestartVisible();
+        makeWinnerVisible();
+
     }
 
     private void callDraw() {
-        Toast.makeText(this,"DRAW", Toast.LENGTH_LONG).show();
-        //TODO Finish game
+
+        tvWinner.setText(getResources().getString(R.string.draw));
+        tvWinner.setTextColor(getResources().getColor(R.color.drawGray));
+
+        disableButtons();
+        makeRestartVisible();
+        makeWinnerVisible();
 
     }
 
+
+    @OnClick(R.id.tv_play_again)
+    public void onViewClicked() {
+
+        enableButtons();
+        resetButtonStatus();
+        makeRestartInvisible();
+        makeWinnerInvisible();
+
+        roundCount = 0;
+        player1Turn = true;
+    }
+
+    private void makeRestartVisible() {
+        tvPlayAgain.setVisibility(View.VISIBLE);
+    }
+
+    private void makeRestartInvisible() {
+        tvPlayAgain.setVisibility(View.GONE);
+
+    }
+
+    private void makeWinnerInvisible() {
+        tvWinner.setVisibility(View.GONE);
+    }
+
+    private void makeWinnerVisible() {
+        tvWinner.setVisibility(View.VISIBLE);
+    }
+
+    private void disableButtons() {
+
+        btn00.setEnabled(false);
+        btn01.setEnabled(false);
+        btn02.setEnabled(false);
+        btn10.setEnabled(false);
+        btn11.setEnabled(false);
+        btn12.setEnabled(false);
+        btn20.setEnabled(false);
+        btn21.setEnabled(false);
+        btn22.setEnabled(false);
+
+    }
+
+    private void enableButtons() {
+
+        btn00.setEnabled(true);
+        btn01.setEnabled(true);
+        btn02.setEnabled(true);
+        btn10.setEnabled(true);
+        btn11.setEnabled(true);
+        btn12.setEnabled(true);
+        btn20.setEnabled(true);
+        btn21.setEnabled(true);
+        btn22.setEnabled(true);
+
+    }
+
+    private void resetButtonStatus() {
+
+        btn00.setText("");
+        btn01.setText("");
+        btn02.setText("");
+        btn10.setText("");
+        btn11.setText("");
+        btn12.setText("");
+        btn20.setText("");
+        btn21.setText("");
+        btn22.setText("");
+    }
 }
