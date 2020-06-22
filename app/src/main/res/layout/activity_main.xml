@@ -25,9 +25,17 @@
         android:text="@string/start" />
 
     <TextView
-        android:id="@+id/tv_about"
+        android:id="@+id/tv_online"
         style="@style/tv_main"
         android:layout_below="@+id/tv_start"
+        android:layout_alignStart="@+id/tv_start"
+        android:layout_alignEnd="@id/tv_start"
+        android:layout_marginTop="15dp"
+        android:text="@string/play_online" />
+    <TextView
+        android:id="@+id/tv_about"
+        style="@style/tv_main"
+        android:layout_below="@+id/tv_online"
         android:layout_alignStart="@+id/tv_start"
         android:layout_alignEnd="@id/tv_start"
         android:layout_marginTop="15dp"

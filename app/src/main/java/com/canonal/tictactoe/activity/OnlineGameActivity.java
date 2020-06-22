@@ -1,19 +1,28 @@
 package com.canonal.tictactoe.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.canonal.tictactoe.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GameActivity extends AppCompatActivity {
+public class OnlineGameActivity extends AppCompatActivity {
+
+    private static final String TAG = "OnlineGame";
 
     @BindView(R.id.btn_00)
     Button btn00;
@@ -41,11 +50,35 @@ public class GameActivity extends AppCompatActivity {
     private int roundCount = 0;
     private boolean player1Turn = true;
 
+    private FirebaseAuth firebaseAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         ButterKnife.bind(this);
+
+        firebaseAuth=FirebaseAuth.getInstance();
+        signInAnonymously();
+    }
+
+    private void signInAnonymously() {
+
+        firebaseAuth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if (task.isSuccessful()){
+                    Log.d(TAG, "onComplete: UID: "+firebaseAuth.getUid());
+                }else {
+                    //Sign-in fails
+                    Log.w(TAG, "signInAnonymously:failure", task.getException());
+                    Toast.makeText(OnlineGameActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
     }
 
     @OnClick(R.id.btn_00)
@@ -221,7 +254,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     @OnClick(R.id.tv_play_again)
-    public void onTvPlayAgainClicked() {
+    public void onViewClicked() {
 
         enableButtons();
         resetButtonStatus();
