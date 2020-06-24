@@ -39,6 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.tv_online)
     public void onTvOnlineClicked() {
-        startActivity(new Intent(MainActivity.this, OnlineGameActivity.class));
+        startActivity(new Intent(MainActivity.this, WaitingRoomActivity.class));
     }
 }
