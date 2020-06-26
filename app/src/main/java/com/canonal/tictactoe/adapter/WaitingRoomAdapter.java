@@ -10,16 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.canonal.tictactoe.R;
+import com.canonal.tictactoe.model.Player;
 import com.google.firebase.database.DataSnapshot;
+
+import java.util.List;
 
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.ViewHolder> {
 
-    private DataSnapshot dataSnapshot;
+    private List<Player> playerList;
     private LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListener;
 
-    public WaitingRoomAdapter(DataSnapshot dataSnapshot, Context context, OnItemClickListener onItemClickListener) {
-        this.dataSnapshot = dataSnapshot;
+    public WaitingRoomAdapter(List<Player> playerList, Context context, OnItemClickListener onItemClickListener) {
+        this.playerList = playerList;
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemClickListener = onItemClickListener;
     }
@@ -33,13 +36,13 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String playerId = dataSnapshot.child("userId").getValue().toString();
-        holder.tvPlayerName.setText(playerId);
+        String username = playerList.get(position).getUsername();
+        holder.tvPlayerName.setText(username);
     }
 
     @Override
     public int getItemCount() {
-        return (int) dataSnapshot.getChildrenCount();
+        return playerList.size();
     }
 
 

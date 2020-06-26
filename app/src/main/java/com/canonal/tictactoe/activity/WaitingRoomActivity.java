@@ -1,6 +1,5 @@
 package com.canonal.tictactoe.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.adapter.WaitingRoomAdapter;
+import com.canonal.tictactoe.dialog.UsernameDialog;
+import com.canonal.tictactoe.listener.UsernameDialogListener;
 import com.canonal.tictactoe.model.Player;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,21 +24,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoomAdapter.OnItemClickListener {
+public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoomAdapter.OnItemClickListener, UsernameDialogListener {
 
     private static final String TAG = "OnlineGame";
 
     @BindView(R.id.rv_waiting_room_players)
     RecyclerView rvWaitingRoomPlayers;
 
-    private Player player;
-    private int playerCount = 0;
+    //private Player player;
+    //private int playerCount = 0;
 
-    private FirebaseAuth firebaseAuth;
+
     private DatabaseReference databaseReference;
+
+    private List<Player> playerList;
+    private String userId;
 
 
     @Override
@@ -46,16 +53,23 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
         setContentView(R.layout.activity_waiting_room);
         ButterKnife.bind(this);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        signInAnonymously();
+        playerList = new ArrayList<>();
+
+
+        getUserInfoFromDialog();
+
     }
 
     private void addToWaitingRoom(final Player player) {
-
+        //get reference and add player to the database
         databaseReference = FirebaseDatabase.getInstance().getReference("waitingRoom");
         databaseReference.child(player.getUserId()).setValue(player);
 
-        databaseReference = databaseReference.child(player.getUserId());
+        listAllAvailablePlayers(databaseReference);
+
+    }
+
+    private void listAllAvailablePlayers(DatabaseReference databaseReference) {
 
         //called once instead constantly
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -65,7 +79,19 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
                 //   playerCount = playerCount + 1;
                 //   databaseReference.child(String.valueOf(playerCount)).setValue(player);
 
-                initiateRecyclerView(dataSnapshot);
+                //TODO First player's playerList did NOT update itself
+                //TODO remove and add players are not in real time
+                //TODO Add a listener for changes
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                    Player player = new Player();
+                    player.setUserId(child.child("userId").getValue().toString());
+                    player.setUsername(child.child("username").getValue().toString());
+                    playerList.add(player);
+
+                }
+
+                initiateRecyclerView(playerList);
 
             }
 
@@ -74,20 +100,26 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
                 //TODO
             }
         });
-
     }
 
-    private void signInAnonymously() {
+    private void signInAnonymously(final String userId, final String username) {
+
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         firebaseAuth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+
                     //If sign-in success set userId
-                    player = new Player();
-                    player.setUserId(firebaseAuth.getUid());
-                    Log.d(TAG, "onComplete: UID: " + firebaseAuth.getUid());
+                    Player player = new Player();
+                    player.setUserId(userId);
+                    player.setUsername(username);
+
+                    Log.d(TAG, "onComplete: userID: " + userId);
+                    Log.d(TAG, "getUsername: " + username);
+
 
                     addToWaitingRoom(player);
 
@@ -100,10 +132,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
         });
     }
 
-    private void initiateRecyclerView(DataSnapshot dataSnapshot) {
+    private void initiateRecyclerView(List<Player> playerList) {
 
         rvWaitingRoomPlayers.setLayoutManager(new LinearLayoutManager(this));
-        WaitingRoomAdapter waitingRoomAdapter = new WaitingRoomAdapter(dataSnapshot, this, this);
+        WaitingRoomAdapter waitingRoomAdapter = new WaitingRoomAdapter(playerList, this, this);
         rvWaitingRoomPlayers.setAdapter(waitingRoomAdapter);
 
     }
@@ -116,7 +148,28 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //databaseReference = FirebaseDatabase.getInstance().getReference("waitingRoom").child();
+        databaseReference = FirebaseDatabase.getInstance().getReference("waitingRoom").child(userId);
+        databaseReference.removeValue();
         //TODO Remove player from waiting list
     }
+
+    @Override
+    public void getUserInfo(String userId, String username) {
+        this.userId = userId;
+
+        signInAnonymously(userId, username);
+
+        Log.d(TAG, "getUsername: " + username);
+        Log.d(TAG, "getUserId: " + userId);
+
+    }
+
+    private void getUserInfoFromDialog() {
+
+        UsernameDialog usernameDialog = new UsernameDialog();
+        usernameDialog.show(getSupportFragmentManager(), "Username Dialog");
+        usernameDialog.setCancelable(false);
+
+    }
+
 }

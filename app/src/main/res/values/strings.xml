@@ -12,6 +12,10 @@
     <string name="draw">Tie Game!</string>
 
     <string name="play_again">Play Again</string>
-
     <string name="play_online">Online</string>
+
+    <string name="user_name">Username</string>
+    <string name="please_user_name">Please enter a username</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>
