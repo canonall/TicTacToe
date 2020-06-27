@@ -1,6 +1,6 @@
 package com.canonal.tictactoe.model;
 
-public class Player {
+public class Player implements Comparable<Player> {
 
     private String userId;
     private String username;
@@ -24,5 +24,10 @@ public class Player {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public int compareTo(Player player) {
+        return this.getUsername().compareTo(player.getUsername());
     }
 }

@@ -57,7 +57,7 @@ public class UsernameDialog extends AppCompatDialogFragment {
                         String userId = firebaseAuth.getUid();
                         String username = etUserName.getText().toString();
 
-                        usernameDialogListener.getUserInfo(userId,username);
+                        usernameDialogListener.createNewPlayer(userId,username);
 
                     }
                 });

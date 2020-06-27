@@ -13,18 +13,32 @@ import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.model.Player;
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.ViewHolder> {
 
-    private List<Player> playerList;
+    private Set<Player> playerSet;
     private LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListener;
 
-    public WaitingRoomAdapter(List<Player> playerList, Context context, OnItemClickListener onItemClickListener) {
-        this.playerList = playerList;
+    public WaitingRoomAdapter(DataSnapshot dataSnapshot, Context context, OnItemClickListener onItemClickListener) {
+
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemClickListener = onItemClickListener;
+        this.playerSet=new TreeSet<>();
+
+        //add each child to playerSet
+        for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+            Player player = new Player();
+            player.setUserId(child.child("userId").getValue().toString());
+            player.setUsername(child.child("username").getValue().toString());
+            playerSet.add(player);
+
+        }
     }
 
     @NonNull
@@ -36,13 +50,18 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        //convert set to list
+        List<Player> playerList = new ArrayList<>(playerSet);
+
         String username = playerList.get(position).getUsername();
         holder.tvPlayerName.setText(username);
+
     }
 
     @Override
     public int getItemCount() {
-        return playerList.size();
+        return playerSet.size();
     }
 
 
