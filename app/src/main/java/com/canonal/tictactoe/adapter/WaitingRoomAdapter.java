@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.model.Player;
-import com.google.firebase.database.DataSnapshot;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+
 
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.ViewHolder> {
 
@@ -24,21 +24,10 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
     private LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListener;
 
-    public WaitingRoomAdapter(DataSnapshot dataSnapshot, Context context, OnItemClickListener onItemClickListener) {
-
+    public WaitingRoomAdapter(Set<Player> playerSet, Context context, OnItemClickListener onItemClickListener) {
+        this.playerSet = playerSet;
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemClickListener = onItemClickListener;
-        this.playerSet=new TreeSet<>();
-
-        //add each child to playerSet
-        for (DataSnapshot child : dataSnapshot.getChildren()) {
-
-            Player player = new Player();
-            player.setUserId(child.child("userId").getValue().toString());
-            player.setUsername(child.child("username").getValue().toString());
-            playerSet.add(player);
-
-        }
     }
 
     @NonNull

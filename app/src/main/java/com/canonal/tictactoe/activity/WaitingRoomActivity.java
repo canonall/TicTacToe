@@ -24,8 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -68,28 +66,20 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                //TODO First player's playerList did NOT update itself
-                //TODO remove and add players are not in real time
-                //TODO Add a listener for changes
-                /*
+                Set<Player> playerSet = new TreeSet<>();
+
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
 
+                    //create all players from stretch
                     Player player = new Player();
                     player.setUserId(child.child("userId").getValue().toString());
                     player.setUsername(child.child("username").getValue().toString());
-                  //  playerList.add(player);
                     playerSet.add(player);
 
                 }
 
-                 */
-
-               // initiateRecyclerView(playerSet);
-                initiateRecyclerView(dataSnapshot);
-
+                initiateRecyclerView(playerSet);
             }
-
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -125,10 +115,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
         });
     }
 
-    private void initiateRecyclerView(DataSnapshot dataSnapshot) {
+    private void initiateRecyclerView(Set<Player> playerSet) {
 
         rvWaitingRoomPlayers.setLayoutManager(new LinearLayoutManager(this));
-        WaitingRoomAdapter waitingRoomAdapter = new WaitingRoomAdapter(dataSnapshot, this, this);
+        WaitingRoomAdapter waitingRoomAdapter = new WaitingRoomAdapter(playerSet, this, this);
         rvWaitingRoomPlayers.setAdapter(waitingRoomAdapter);
 
     }
@@ -143,14 +133,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
         super.onBackPressed();
         databaseReference = FirebaseDatabase.getInstance().getReference("waitingRoom").child(player.getUserId());
         databaseReference.removeValue();
-
-        //TODO Remove player from waiting list
     }
 
     @Override
     public void createNewPlayer(String userId, String username) {
-        //this.userId = userId;
-        player=new Player();
+        player = new Player();
         player.setUserId(userId);
         player.setUsername(username);
 
