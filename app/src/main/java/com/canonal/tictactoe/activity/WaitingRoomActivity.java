@@ -124,8 +124,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
     }
 
     @Override
-    public void OnItemClick(int position) {
+    public void onItemClick(int position) {
         //TODO
+        //if user clicks invite, onItemClick not working
+        //if user clicks onItemClick, invite not working
+        Log.d(TAG, "OnItemClick: RV CLICKED");
     }
 
     @Override
@@ -150,7 +153,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
 
     private void getUserInfoFromDialog() {
 
-        UsernameDialog usernameDialog = new UsernameDialog();
+        UsernameDialog usernameDialog = new UsernameDialog(this);
         usernameDialog.show(getSupportFragmentManager(), "Username Dialog");
         usernameDialog.setCancelable(false);
 

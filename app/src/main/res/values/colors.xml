@@ -8,8 +8,9 @@
     <color name="colorPrimaryDarkDemo">#006a79</color>
     <color name="colorAccentDemo">#5ccada</color>
 
-
     <color name="colorBackground">#32323B</color>
     <color name="drawGray">#B3B6B7</color>
+
+    <color name="red">#CC072E</color>
 
 </resources>

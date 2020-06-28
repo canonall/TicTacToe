@@ -1,6 +1,7 @@
 package com.canonal.tictactoe.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +19,21 @@ import java.util.List;
 import java.util.Set;
 
 
+
+
 public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.ViewHolder> {
 
     private Set<Player> playerSet;
+    private List<Player> playerList;
     private LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListener;
 
     public WaitingRoomAdapter(Set<Player> playerSet, Context context, OnItemClickListener onItemClickListener) {
         this.playerSet = playerSet;
+
+        //convert set to list to bind views easily
+        this.playerList = new ArrayList<>(playerSet);
+
         this.layoutInflater = LayoutInflater.from(context);
         this.onItemClickListener = onItemClickListener;
     }
@@ -39,9 +47,6 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        //convert set to list
-        List<Player> playerList = new ArrayList<>(playerSet);
 
         String username = playerList.get(position).getUsername();
         holder.tvPlayerName.setText(username);
@@ -57,12 +62,21 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tvPlayerName;
+        TextView tvInvite;
         OnItemClickListener onItemClickListener;
 
         public ViewHolder(View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
 
             tvPlayerName = itemView.findViewById(R.id.tv_player_name);
+            tvInvite=itemView.findViewById(R.id.tv_invite);
+
+            tvInvite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("INVITEEE", "onClick:INVITEE");
+                }
+            });
 
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
@@ -70,11 +84,11 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
 
         @Override
         public void onClick(View view) {
-            onItemClickListener.OnItemClick(getAdapterPosition());
+            onItemClickListener.onItemClick(getAdapterPosition());
         }
     }
 
     public interface OnItemClickListener {
-        void OnItemClick(int position);
+        void onItemClick(int position);
     }
 }
