@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.adapter.WaitingRoomAdapter;
 import com.canonal.tictactoe.dialog.UsernameDialog;
+import com.canonal.tictactoe.listener.RvWaitingRoomItemClickListener;
 import com.canonal.tictactoe.listener.UsernameDialogListener;
+import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Player;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,16 +32,14 @@ import java.util.TreeSet;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoomAdapter.OnItemClickListener, UsernameDialogListener {
+public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingRoomItemClickListener, UsernameDialogListener {
 
     private static final String TAG = "OnlineGame";
 
     @BindView(R.id.rv_waiting_room_players)
     RecyclerView rvWaitingRoomPlayers;
 
-    private DatabaseReference databaseReference;
-    private Player player;
-
+    private Player myPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,48 +49,78 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
 
         getUserInfoFromDialog();
 
+
     }
 
-    private void addToWaitingRoom(final Player player) {
+    private void addToWaitingRoom(final Player myPlayer) {
         //get reference and add player to the database
-        databaseReference = FirebaseDatabase.getInstance().getReference("waitingRoom");
-        databaseReference.child(player.getUserId()).setValue(player);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_waitingRoom));
+        databaseReference.child(myPlayer.getUserId()).child(getResources().getString(R.string.path_player)).setValue(myPlayer);
 
-        listAllAvailablePlayers(databaseReference);
-
-    }
-
-    private void listAllAvailablePlayers(DatabaseReference databaseReference) {
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                Set<Player> playerSet = new TreeSet<>();
-
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-
-                    //create all players from stretch
-                    Player player = new Player();
-                    player.setUserId(child.child("userId").getValue().toString());
-                    player.setUsername(child.child("username").getValue().toString());
-                    playerSet.add(player);
-
-                }
-
-                initiateRecyclerView(playerSet);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO
-            }
-        });
-
+        listAllAvailablePlayers(myPlayer);
+        checkGameInvites();
 
     }
 
-    private void signInAnonymously(final Player player) {
+    private void listAllAvailablePlayers(final Player myPlayer) {
+
+        FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_waitingRoom))
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        Set<Player> playerSet = new TreeSet<>();
+
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                            //get each player from firebase and add them to set
+                            Player player = child.child(getResources().getString(R.string.path_player)).getValue(Player.class);
+                            playerSet.add(player);
+
+                        }
+
+                        initiateRecyclerView(playerSet, myPlayer);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        //TODO
+                    }
+                });
+    }
+
+    private void checkGameInvites() {
+
+        FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                            GameInvite gameInvite = child.getValue(GameInvite.class);
+
+                            if (gameInvite != null) {
+
+                                String inviteePlayerId = gameInvite.getInvitee().getPlayer().getUserId();
+                                String inviteePlayerName = gameInvite.getInvitee().getPlayer().getUsername();
+
+                                Log.d(TAG, "onDataChange: received invitee ID-->" + gameInvite.getInvitee().getPlayer().getUserId());
+                                Log.d(TAG, "onDataChange: received invitee  Name-->" + gameInvite.getInvitee().getPlayer().getUsername());
+
+                                if (isMyPlayerInvited(inviteePlayerId, inviteePlayerName)) {
+                                    createGameInviteDialog();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void signInAnonymously(final Player myPlayer) {
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
@@ -101,10 +131,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
                 if (task.isSuccessful()) {
 
                     //If sign-in success add player to waiting room
-                    addToWaitingRoom(player);
+                    addToWaitingRoom(myPlayer);
 
-                    Log.d(TAG, "onComplete: userID: " + player.getUserId());
-                    Log.d(TAG, "getUsername: " + player.getUsername());
+                    Log.d(TAG, "onComplete: userID: " + myPlayer.getUserId());
+                    Log.d(TAG, "getUsername: " + myPlayer.getUsername());
 
                 } else {
                     //Sign-in fails
@@ -115,36 +145,31 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
         });
     }
 
-    private void initiateRecyclerView(Set<Player> playerSet) {
+    private void initiateRecyclerView(Set<Player> playerSet, Player myPlayer) {
 
         rvWaitingRoomPlayers.setLayoutManager(new LinearLayoutManager(this));
-        WaitingRoomAdapter waitingRoomAdapter = new WaitingRoomAdapter(playerSet, this, this);
+        WaitingRoomAdapter waitingRoomAdapter = new WaitingRoomAdapter(playerSet, myPlayer, this, this);
         rvWaitingRoomPlayers.setAdapter(waitingRoomAdapter);
 
     }
 
     @Override
-    public void onItemClick(int position) {
-        //TODO
-        //if user clicks invite, onItemClick not working
-        //if user clicks onItemClick, invite not working
-        Log.d(TAG, "OnItemClick: RV CLICKED");
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        databaseReference = FirebaseDatabase.getInstance().getReference("waitingRoom").child(player.getUserId());
+       DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+               .child(getResources().getString(R.string.path_waitingRoom))
+               .child(myPlayer.getUserId());
         databaseReference.removeValue();
     }
 
     @Override
     public void createNewPlayer(String userId, String username) {
-        player = new Player();
-        player.setUserId(userId);
-        player.setUsername(username);
 
-        signInAnonymously(player);
+        myPlayer = new Player();
+        myPlayer.setUserId(userId);
+        myPlayer.setUsername(username);
+
+        signInAnonymously(myPlayer);
 
         Log.d(TAG, "getUsername: " + username);
         Log.d(TAG, "getUserId: " + userId);
@@ -159,4 +184,21 @@ public class WaitingRoomActivity extends AppCompatActivity implements WaitingRoo
 
     }
 
+    private void createGameInviteDialog() {
+    }
+
+    private boolean isMyPlayerInvited(String inviteePlayerId, String inviteePlayerName) {
+        if (myPlayer.getUserId().equals(inviteePlayerId) && myPlayer.getUsername().equals(inviteePlayerName)) {
+            Log.d("GAME INVITE", "onDataChange-->invite received-->invitee: " + inviteePlayerId + " " + inviteePlayerName);
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public void onRvItemClick(int position) {
+        //TODO
+        //if user clicks invite, onItemClick not working
+        //if user clicks onItemClick, invite not working
+        Log.d(TAG, "OnItemClick: RV CLICKED");
+    }
 }

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_toStartOf="@id/tv_invite"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
@@ -24,7 +24,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="15dp"
         android:text="@string/invite"
-        android:textColor="@color/red"
+        android:textColor="@color/redInvite"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -32,7 +32,7 @@
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/tv_player_name"
         android:layout_marginTop="15dp"
+        android:layout_below="@+id/tv_player_name"
         android:background="@android:color/darker_gray" />
 </RelativeLayout>

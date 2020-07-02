@@ -23,4 +23,10 @@
     <string name="cancel">Cancel</string>
 
     <string name="invite">INVITE</string>
+
+    <string name="path_gameInvite">gameInvite</string>
+    <string name="path_invitee">invitee</string>
+    <string name="path_inviter">inviter</string>
+    <string name="path_waitingRoom">waitingRoom</string>
+    <string name="path_player">player</string>
 </resources>

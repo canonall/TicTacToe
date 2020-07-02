@@ -11,6 +11,7 @@
     <color name="colorBackground">#32323B</color>
     <color name="drawGray">#B3B6B7</color>
 
-    <color name="red">#CC072E</color>
+    <color name="red">#A50424</color>
+    <color name="redInvite">#C91237</color>
 
 </resources>
