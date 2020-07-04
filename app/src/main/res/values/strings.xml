@@ -22,11 +22,18 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
+    <string name="accept_game_invite">Accept</string>
+    <string name="reject_game_invite">Reject</string>
+
     <string name="invite">INVITE</string>
 
     <string name="path_gameInvite">gameInvite</string>
+    <string name="path_activeGame">activeGame</string>
     <string name="path_invitee">invitee</string>
     <string name="path_inviter">inviter</string>
     <string name="path_waitingRoom">waitingRoom</string>
     <string name="path_player">player</string>
+
+    <string name="invite_text">%1$s invites you to play!</string>
+
 </resources>

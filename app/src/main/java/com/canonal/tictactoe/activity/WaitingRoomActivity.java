@@ -1,5 +1,6 @@
 package com.canonal.tictactoe.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -11,11 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.adapter.WaitingRoomAdapter;
+import com.canonal.tictactoe.dialog.GameInviteDialog;
 import com.canonal.tictactoe.dialog.UsernameDialog;
+import com.canonal.tictactoe.listener.GameInviteDialogListener;
 import com.canonal.tictactoe.listener.RvWaitingRoomItemClickListener;
 import com.canonal.tictactoe.listener.UsernameDialogListener;
+import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.GameInvite;
+import com.canonal.tictactoe.model.Oplayer;
 import com.canonal.tictactoe.model.Player;
+import com.canonal.tictactoe.model.Xplayer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,7 +38,7 @@ import java.util.TreeSet;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingRoomItemClickListener, UsernameDialogListener {
+public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingRoomItemClickListener, UsernameDialogListener, GameInviteDialogListener {
 
     private static final String TAG = "OnlineGame";
 
@@ -108,7 +114,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
                                 Log.d(TAG, "onDataChange: received invitee  Name-->" + gameInvite.getInvitee().getPlayer().getUsername());
 
                                 if (isMyPlayerInvited(inviteePlayerId, inviteePlayerName)) {
-                                    createGameInviteDialog();
+                                    createGameInviteDialog(gameInvite);
                                 }
                             }
                         }
@@ -156,9 +162,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-       DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
-               .child(getResources().getString(R.string.path_waitingRoom))
-               .child(myPlayer.getUserId());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                .child(getResources().getString(R.string.path_waitingRoom))
+                .child(myPlayer.getUserId());
         databaseReference.removeValue();
     }
 
@@ -184,7 +190,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     }
 
-    private void createGameInviteDialog() {
+    private void createGameInviteDialog(GameInvite gameInvite) {
+
+        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite);
+        gameInviteDialog.show(getSupportFragmentManager(), "GameInvite Dialog");
+        gameInviteDialog.setCancelable(false);
+
     }
 
     private boolean isMyPlayerInvited(String inviteePlayerId, String inviteePlayerName) {
@@ -196,9 +207,53 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     @Override
     public void onRvItemClick(int position) {
-        //TODO
         //if user clicks invite, onItemClick not working
         //if user clicks onItemClick, invite not working
         Log.d(TAG, "OnItemClick: RV CLICKED");
+    }
+
+    @Override
+    public void createMatch(Player inviteePlayer, Player inviterPlayer) {
+
+        //delete from gameInvite node
+        FirebaseDatabase.getInstance().getReference()
+                .child(getResources().getString(R.string.path_gameInvite))
+                .child(inviteePlayer.getUserId())
+                .removeValue();
+
+        Xplayer xplayer = getXplayer(inviterPlayer);
+        Oplayer oplayer = getOplayer(inviteePlayer);
+        ActiveGame activeGame = getActiveGame(xplayer, oplayer);
+
+        //add to activeGame node
+        FirebaseDatabase.getInstance().getReference()
+                .child(getResources().getString(R.string.path_activeGame))
+                .child(inviteePlayer.getUserId() + inviterPlayer.getUserId())
+                .setValue(activeGame);
+
+        startActivity(new Intent(WaitingRoomActivity.this, OnlineGameActivity.class));
+    }
+
+    private ActiveGame getActiveGame(Xplayer xplayer, Oplayer oplayer) {
+        ActiveGame activeGame = new ActiveGame();
+        activeGame.setXplayer(xplayer);
+        activeGame.setOplayer(oplayer);
+        return activeGame;
+    }
+
+    private Oplayer getOplayer(Player inviteePlayer) {
+        Oplayer oplayer = new Oplayer();
+        oplayer.setPlayer(inviteePlayer);
+        oplayer.setSymbol(getResources().getString(R.string.o));
+        return oplayer;
+
+    }
+
+    private Xplayer getXplayer(Player inviterPlayer) {
+        Xplayer xplayer = new Xplayer();
+        xplayer.setPlayer(inviterPlayer);
+        xplayer.setSymbol(getResources().getString(R.string.x));
+        return xplayer;
+
     }
 }
