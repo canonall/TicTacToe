@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +17,9 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.listener.UsernameDialogListener;
 import com.canonal.tictactoe.utility.Constants;
-import com.canonal.tictactoe.utility.EmptyFieldChecker;
+import com.canonal.tictactoe.utility.EmptyFieldOperator;
 import com.canonal.tictactoe.utility.SharedPreferenceOperator;
 import com.google.firebase.auth.FirebaseAuth;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class UsernameDialog extends AppCompatDialogFragment {
 
@@ -102,8 +99,8 @@ public class UsernameDialog extends AppCompatDialogFragment {
                     String userId = firebaseAuth.getUid();
                     String username = etUserName.getText().toString();
 
-                    if (EmptyFieldChecker.isFieldEmpty(username)) {
-                        EmptyFieldChecker.printEmptyError(etUserName, context);
+                    if (EmptyFieldOperator.isFieldEmpty(username)) {
+                        EmptyFieldOperator.printEmptyError(etUserName, context);
 
                     } else {
                         usernameDialogListener.createNewPlayer(userId, username);

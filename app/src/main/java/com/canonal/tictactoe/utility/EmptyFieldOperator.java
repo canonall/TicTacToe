@@ -6,7 +6,7 @@ import android.widget.EditText;
 
 import com.canonal.tictactoe.R;
 
-public class EmptyFieldChecker {
+public class EmptyFieldOperator {
 
     public static boolean isFieldEmpty(String text) {
         return TextUtils.isEmpty(text);

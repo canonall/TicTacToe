@@ -36,4 +36,7 @@
 
     <string name="invite_text">%1$s invites you to play!</string>
 
+    <string name="player1_name">Player 1: %1$s</string>
+    <string name="player2_name">Player 2: %1$s</string>
+
 </resources>

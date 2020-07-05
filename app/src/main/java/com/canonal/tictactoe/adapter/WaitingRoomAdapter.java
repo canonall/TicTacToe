@@ -17,6 +17,7 @@ import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Invitee;
 import com.canonal.tictactoe.model.Inviter;
 import com.canonal.tictactoe.model.Player;
+import com.canonal.tictactoe.utility.GameInviteOperator;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -92,9 +93,9 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
                 @Override
                 public void onClick(View view) {
 
-                    Invitee inviteePlayer = getInviteePlayer();
-                    Inviter inviterPlayer = getInviterPlayer();
-                    GameInvite gameInvite = getGameInvite(inviteePlayer, inviterPlayer);
+                    Invitee inviteePlayer = GameInviteOperator.getInviteePlayer(playerList, getAdapterPosition());
+                    Inviter inviterPlayer = GameInviteOperator.getInviterPlayer(myPlayer);
+                    GameInvite gameInvite = GameInviteOperator.getGameInvite(inviteePlayer, inviterPlayer);
 
 
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
@@ -121,35 +122,5 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
             rvWaitingRoomItemClickListener.onRvItemClick(getAdapterPosition());
         }
 
-        private Invitee getInviteePlayer() {
-
-            Invitee inviteePlayer = new Invitee();
-
-            Player player = new Player();
-            String inviteePlayerId = playerList.get(getAdapterPosition()).getUserId();
-            String inviteePlayerName = playerList.get(getAdapterPosition()).getUsername();
-
-            player.setUserId(inviteePlayerId);
-            player.setUsername(inviteePlayerName);
-
-            inviteePlayer.setPlayer(player);
-            return inviteePlayer;
-
-        }
-
-        private Inviter getInviterPlayer() {
-
-            Inviter inviterPlayer = new Inviter();
-            inviterPlayer.setPlayer(myPlayer);
-            return inviterPlayer;
-
-        }
-
-        private GameInvite getGameInvite(Invitee invitee, Inviter inviter) {
-            GameInvite gameInvite = new GameInvite();
-            gameInvite.setInvitee(invitee);
-            gameInvite.setInviter(inviter);
-            return gameInvite;
-        }
     }
 }
