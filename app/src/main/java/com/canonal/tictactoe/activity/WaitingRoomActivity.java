@@ -23,6 +23,7 @@ import com.canonal.tictactoe.model.Oplayer;
 import com.canonal.tictactoe.model.Player;
 import com.canonal.tictactoe.model.Xplayer;
 import com.canonal.tictactoe.utility.ActiveGameOperator;
+import com.canonal.tictactoe.utility.GameInviteOperator;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -55,7 +56,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         ButterKnife.bind(this);
 
         getUserInfoFromDialog();
-
 
     }
 
@@ -114,8 +114,8 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
                                 Log.d(TAG, "onDataChange: received invitee ID-->" + gameInvite.getInvitee().getPlayer().getUserId());
                                 Log.d(TAG, "onDataChange: received invitee  Name-->" + gameInvite.getInvitee().getPlayer().getUsername());
 
-                                if (isMyPlayerInvited(inviteePlayerId, inviteePlayerName)) {
-                                   createGameInviteDialog(gameInvite);
+                                if (GameInviteOperator.isMyPlayerInvited(inviteePlayerId, inviteePlayerName, myPlayer)) {
+                                    createGameInviteDialog(gameInvite);
                                 }
                             }
                         }
@@ -199,14 +199,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     }
 
-
-
-    private boolean isMyPlayerInvited(String inviteePlayerId, String inviteePlayerName) {
+  /*  private boolean isMyPlayerInvited(String inviteePlayerId, String inviteePlayerName) {
         if (myPlayer.getUserId().equals(inviteePlayerId) && myPlayer.getUsername().equals(inviteePlayerName)) {
             Log.d("GAME INVITE", "onDataChange-->invite received-->invitee: " + inviteePlayerId + " " + inviteePlayerName);
             return true;
         } else return false;
-    }
+    }*/
 
     @Override
     public void onRvItemClick(int position) {

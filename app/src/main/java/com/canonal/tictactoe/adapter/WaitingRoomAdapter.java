@@ -104,7 +104,6 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
                     //todo
                     //addOnSuccessListener
 
-
                     databaseReference.child(gameInvite.getInvitee().getPlayer().getUserId())
                             .setValue(gameInvite);
 

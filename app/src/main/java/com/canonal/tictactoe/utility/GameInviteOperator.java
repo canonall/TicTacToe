@@ -1,5 +1,7 @@
 package com.canonal.tictactoe.utility;
 
+import android.util.Log;
+
 import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Invitee;
 import com.canonal.tictactoe.model.Inviter;
@@ -38,5 +40,11 @@ public class GameInviteOperator {
         gameInvite.setInvitee(invitee);
         gameInvite.setInviter(inviter);
         return gameInvite;
+    }
+    public static boolean isMyPlayerInvited(String inviteePlayerId, String inviteePlayerName, Player myPlayer) {
+        if (myPlayer.getUserId().equals(inviteePlayerId) && myPlayer.getUsername().equals(inviteePlayerName)) {
+            Log.d("GAME INVITE", "onDataChange-->invite received-->invitee: " + inviteePlayerId + " " + inviteePlayerName);
+            return true;
+        } else return false;
     }
 }
