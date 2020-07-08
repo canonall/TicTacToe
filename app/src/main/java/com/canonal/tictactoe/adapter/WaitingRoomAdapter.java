@@ -12,12 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.canonal.tictactoe.R;
+import com.canonal.tictactoe.enums.InviteStatus;
 import com.canonal.tictactoe.listener.RvWaitingRoomItemClickListener;
 import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Invitee;
 import com.canonal.tictactoe.model.Inviter;
 import com.canonal.tictactoe.model.Player;
-import com.canonal.tictactoe.utility.GameInviteOperator;
+import com.canonal.tictactoe.utility.operator.GameInviteOperator;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -95,8 +96,7 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
 
                     Invitee inviteePlayer = GameInviteOperator.getInviteePlayer(playerList, getAdapterPosition());
                     Inviter inviterPlayer = GameInviteOperator.getInviterPlayer(myPlayer);
-                    GameInvite gameInvite = GameInviteOperator.getGameInvite(inviteePlayer, inviterPlayer);
-
+                    GameInvite gameInvite = GameInviteOperator.getGameInvite(inviteePlayer, inviterPlayer, InviteStatus.WAITING);
 
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                             .child(resources.getString(R.string.path_gameInvite));
@@ -107,9 +107,14 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
                     databaseReference.child(gameInvite.getInvitee().getPlayer().getUserId())
                             .setValue(gameInvite);
 
-                    Log.d("INVITE POSITION", "onClick: invitee player " + inviteePlayer.getPlayer().getUserId() + " " + inviteePlayer.getPlayer().getUsername());
-                    Log.d("INVITE POSITION", "onClick: inviter player " + inviterPlayer.getPlayer().getUserId() + " " + inviterPlayer.getPlayer().getUsername());
-                    Log.d("INVITE", "onClick:INVITEE");
+                    Log.d("INVITE POSITION", "onClick: invitee player "
+                            + gameInvite.getInvitee().getPlayer().getUserId() + " " + gameInvite.getInvitee().getPlayer().getUsername());
+
+                    Log.d("INVITE POSITION", "onClick: inviter player "
+                            + gameInvite.getInviter().getPlayer().getUserId() + " " + gameInvite.getInviter().getPlayer().getUsername());
+
+                    Log.d("INVITE POSITION", "onClick: invite status " + gameInvite.getInviteStatus());
+
 
                 }
             });

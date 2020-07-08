@@ -33,6 +33,7 @@
     <string name="path_inviter">inviter</string>
     <string name="path_waitingRoom">waitingRoom</string>
     <string name="path_player">player</string>
+    <string name="path_inviteStatus">inviteStatus</string>
 
     <string name="invite_text">%1$s invites you to play!</string>
 

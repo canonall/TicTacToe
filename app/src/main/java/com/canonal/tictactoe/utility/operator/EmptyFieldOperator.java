@@ -1,4 +1,4 @@
-package com.canonal.tictactoe.utility;
+package com.canonal.tictactoe.utility.operator;
 
 import android.content.Context;
 import android.text.TextUtils;

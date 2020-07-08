@@ -17,8 +17,8 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.listener.UsernameDialogListener;
 import com.canonal.tictactoe.utility.Constants;
-import com.canonal.tictactoe.utility.EmptyFieldOperator;
-import com.canonal.tictactoe.utility.SharedPreferenceOperator;
+import com.canonal.tictactoe.utility.operator.EmptyFieldOperator;
+import com.canonal.tictactoe.utility.operator.SharedPreferenceOperator;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class UsernameDialog extends AppCompatDialogFragment {

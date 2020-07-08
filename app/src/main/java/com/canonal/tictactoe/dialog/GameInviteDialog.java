@@ -14,8 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.canonal.tictactoe.R;
+import com.canonal.tictactoe.enums.InviteStatus;
 import com.canonal.tictactoe.listener.GameInviteDialogListener;
 import com.canonal.tictactoe.model.GameInvite;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class GameInviteDialog extends DialogFragment {
@@ -52,7 +57,11 @@ public class GameInviteDialog extends DialogFragment {
                 .setPositiveButton(R.string.accept_game_invite, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        gameInviteDialogListener.createMatch(gameInvite.getInvitee().getPlayer(), gameInvite.getInviter().getPlayer());
+                        FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
+                                .child(gameInvite.getInvitee().getPlayer().getUserId())
+                                .child(getResources().getString(R.string.path_inviteStatus))
+                                .setValue(InviteStatus.ACCEPTED);
+                        gameInviteDialogListener.createActiveGameNode(gameInvite);
                     }
                 });
 
