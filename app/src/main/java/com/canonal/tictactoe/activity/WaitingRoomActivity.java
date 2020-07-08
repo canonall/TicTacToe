@@ -223,12 +223,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     @Override
     public void createActiveGameNode(GameInvite gameInvite) {
 
-       /* //delete from gameInvite node
-        FirebaseDatabase.getInstance().getReference()
-                .child(getResources().getString(R.string.path_gameInvite))
-                .child(gameInvite.getInvitee().getPlayer().getUserId())
-                .removeValue();*/
-
         Xplayer xplayer = ActiveGameOperator.getXplayer(gameInvite.getInviter().getPlayer(), this);
         Oplayer oplayer = ActiveGameOperator.getOplayer(gameInvite.getInvitee().getPlayer(), this);
         ActiveGame activeGame = ActiveGameOperator.getActiveGame(xplayer, oplayer);
@@ -246,12 +240,13 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     private void createMatch(ActiveGame activeGame) {
 
         //delete from gameInvite node
-        FirebaseDatabase.getInstance().getReference()
+      /*  FirebaseDatabase.getInstance().getReference()
                 .child(getResources().getString(R.string.path_gameInvite))
                 .child(activeGame.getOplayer().getPlayer().getUserId())
                 .removeValue();
-
-        WaitingRoomOperator.removeFromWaitingRoom(activeGame, this);
+*/
+        GameInviteOperator.removePlayersFromGameInviteNode(activeGame, this);
+        WaitingRoomOperator.removePlayersFromWaitingRoomNode(activeGame, this);
 
         Intent intent = new Intent(WaitingRoomActivity.this, OnlineGameActivity.class);
         intent.putExtra("parcelableActiveGame", activeGame);
