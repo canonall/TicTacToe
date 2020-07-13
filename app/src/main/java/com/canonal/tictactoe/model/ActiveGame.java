@@ -5,31 +5,62 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ActiveGame implements Parcelable {
-    Xplayer xplayer;
-    Oplayer oplayer;
 
+    XPlayer xPlayer;
+    OPlayer oPlayer;
+    Player currentTurnPlayer;
+    int roundCount;
+    Move move;
 
-    public ActiveGame(){}
-
-    public Xplayer getXplayer() {
-        return xplayer;
+    public ActiveGame() {
     }
 
-    public void setXplayer(Xplayer xplayer) {
-        this.xplayer = xplayer;
+    public XPlayer getxPlayer() {
+        return xPlayer;
     }
 
-    public Oplayer getOplayer() {
-        return oplayer;
+    public void setxPlayer(XPlayer xPlayer) {
+        this.xPlayer = xPlayer;
     }
 
-    public void setOplayer(Oplayer oplayer) {
-        this.oplayer = oplayer;
+    public OPlayer getoPlayer() {
+        return oPlayer;
+    }
+
+    public void setoPlayer(OPlayer oPlayer) {
+        this.oPlayer = oPlayer;
+    }
+
+    public Move getMove() {
+        return move;
+    }
+
+    public void setMove(Move move) {
+        this.move = move;
+    }
+
+    public int getRoundCount() {
+        return roundCount;
+    }
+
+    public void setRoundCount(int roundCount) {
+        this.roundCount = roundCount;
+    }
+
+    public Player getCurrentTurnPlayer() {
+        return currentTurnPlayer;
+    }
+
+    public void setCurrentTurnPlayer(Player currentTurnPlayer) {
+        this.currentTurnPlayer = currentTurnPlayer;
     }
 
     protected ActiveGame(Parcel in) {
-        xplayer = (Xplayer) in.readValue(Xplayer.class.getClassLoader());
-        oplayer = (Oplayer) in.readValue(Oplayer.class.getClassLoader());
+        xPlayer = (XPlayer) in.readValue(XPlayer.class.getClassLoader());
+        oPlayer = (OPlayer) in.readValue(OPlayer.class.getClassLoader());
+        currentTurnPlayer = (Player) in.readValue(Player.class.getClassLoader());
+        roundCount = in.readInt();
+        move = (Move) in.readValue(Move.class.getClassLoader());
     }
 
     @Override
@@ -39,8 +70,11 @@ public class ActiveGame implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(xplayer);
-        dest.writeValue(oplayer);
+        dest.writeValue(xPlayer);
+        dest.writeValue(oPlayer);
+        dest.writeValue(currentTurnPlayer);
+        dest.writeInt(roundCount);
+        dest.writeValue(move);
     }
 
     @SuppressWarnings("unused")

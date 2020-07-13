@@ -12,8 +12,8 @@ public class WaitingRoomOperator {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child(context.getResources().getString(R.string.path_waitingRoom));
 
-        databaseReference.child(activeGame.getXplayer().getPlayer().getUserId()).removeValue();
-        databaseReference.child(activeGame.getOplayer().getPlayer().getUserId()).removeValue();
+        databaseReference.child(activeGame.getxPlayer().getPlayer().getUserId()).removeValue();
+        databaseReference.child(activeGame.getoPlayer().getPlayer().getUserId()).removeValue();
 
     }
 }

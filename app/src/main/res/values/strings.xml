@@ -10,6 +10,8 @@
     <string name="player1_wins">Player 1 Wins!</string>
     <string name="player2_wins">Player 2 Wins!</string>
     <string name="draw">Tie Game!</string>
+    <string name="player_online_wins">%1$s Wins!</string>
+
 
     <string name="play_again">Play Again</string>
     <string name="play_online">Online</string>
@@ -34,10 +36,14 @@
     <string name="path_waitingRoom">waitingRoom</string>
     <string name="path_player">player</string>
     <string name="path_inviteStatus">inviteStatus</string>
+    <string name="path_move">move</string>
 
     <string name="invite_text">%1$s invites you to play!</string>
 
-    <string name="player1_name">Player 1: %1$s</string>
-    <string name="player2_name">Player 2: %1$s</string>
+    <string name="player1_name">X: %1$s</string>
+    <string name="player2_name">O: %1$s</string>
+
+    <string name="intent_my_player">myPlayerIntent</string>
+    <string name="intent_active_game">activeGameIntent</string>
 
 </resources>

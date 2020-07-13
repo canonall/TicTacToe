@@ -2,15 +2,24 @@ package com.canonal.tictactoe.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.model.ActiveGame;
-import com.canonal.tictactoe.model.GameInvite;
+import com.canonal.tictactoe.model.Move;
+import com.canonal.tictactoe.model.Player;
+import com.canonal.tictactoe.utility.operator.ActiveGameOperator;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,8 +54,10 @@ public class OnlineGameActivity extends AppCompatActivity {
     @BindView(R.id.tv_player2_name)
     TextView tvPlayer2Name;
 
-    private int roundCount = 0;
-    private boolean player1Turn = true;
+
+    private List<Button> buttonList;
+    private ActiveGame activeGame;
+    private Player myPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,104 +65,195 @@ public class OnlineGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_online_game);
         ButterKnife.bind(this);
 
-        Intent intent = getIntent();
-        ActiveGame activeGame = intent.getParcelableExtra("parcelableActiveGame");
-        if (activeGame != null) {
-            String xplayer = activeGame.getXplayer().getPlayer().getUsername();
-            String oplayer=activeGame.getOplayer().getPlayer().getUsername();
+        buttonList = addButtonsToList();
+        setTagToButtons();
 
-            tvPlayer1Name.setText(xplayer);
-            tvPlayer2Name.setText(oplayer);
+        getPlayersInfo();
+        printPlayerNames(activeGame);
 
+        FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        ActiveGame updatedActiveGame = dataSnapshot.getValue(ActiveGame.class);
+
+                        if (updatedActiveGame != null) {
+                            if (updatedActiveGame.getMove() != null) {
+
+                                String symbol = updatedActiveGame.getMove().getMoveSymbol();
+                                String position = updatedActiveGame.getMove().getMovePosition();
+
+                                for (Button button : buttonList) {
+                                    if (button.getTag().equals(position)) {
+                                        updateBoard(button, symbol);
+                                        checkWinner(updatedActiveGame);
+                                        break;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+
+                        activeGame = updatedActiveGame;
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    /*    FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                .child(getString(R.string.path_move)).child(String.valueOf(roundCount)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Move move = dataSnapshot.getValue(Move.class);
+
+                if (move != null) {
+                    String symbol = move.getMoveSymbol();
+                    String position = move.getMovePosition();
+
+                    for (Button button : buttonList) {
+                        if (button.getTag().equals(position)) {
+                            updateBoard(button, symbol);
+                            break;
+                        }
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+     */
+
+    }
+
+
+    private void click(final Button btn) {
+
+        //if true then it is myPlayer's turn to play, else do nothing
+        if (ActiveGameOperator.checkCurrentTurnPlayer(myPlayer, activeGame)) {
+
+            Move move = new Move();
+
+            //if myPlayer is XPlayer then print X, else print O
+            if (ActiveGameOperator.checkXPlayer(myPlayer, activeGame)) {
+
+                move.setMovePosition(btn.getTag().toString());
+                move.setMoveSymbol(getString(R.string.x));
+
+                //change player turn
+                activeGame.setCurrentTurnPlayer(activeGame.getoPlayer().getPlayer());
+
+
+            } else {
+
+                move.setMovePosition(btn.getTag().toString());
+                move.setMoveSymbol(getString(R.string.o));
+
+                //change player turn
+                activeGame.setCurrentTurnPlayer(activeGame.getxPlayer().getPlayer());
+
+            }
+
+            activeGame.setMove(move);
+            int roundCount = activeGame.getRoundCount();
+            activeGame.setRoundCount(++roundCount);
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child(getString(R.string.path_activeGame))
+                    .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                    .setValue(activeGame);
+
+      /*  FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                .child(getString(R.string.path_move))
+                .child(String.valueOf(roundCount))
+                .setValue(move);
+       */
+
+            // roundCount++;
+
+            /*
+            //Check winner after  round 5
+            //Before that nobody can win
+            if (roundCount >= 5) {
+
+                //check if there is a winner
+                if (checkForWin()) {
+                    // pronounceWinner(xPlayerTurn);
+                }
+                //if roundCount is 9, then draw
+                //else continue;
+                else if (roundCount == 9) {
+                    callDraw();
+                }
+
+            }
+
+            //change player turn
+            // xPlayerTurn = !xPlayerTurn;
+
+            //user cant click the same button
+            btn.setEnabled(false);
+
+             */
         }
+
+
     }
 
-    @OnClick(R.id.btn_00)
-    public void onBtn00Clicked() {
-        click(btn00);
-    }
+    private void updateBoard(Button button, String symbol) {
 
-    @OnClick(R.id.btn_01)
-    public void onBtn01Clicked() {
-        click(btn01);
-    }
-
-    @OnClick(R.id.btn_02)
-    public void onBtn02Clicked() {
-        click(btn02);
-    }
-
-    @OnClick(R.id.btn_10)
-    public void onBtn10Clicked() {
-        click(btn10);
-    }
-
-    @OnClick(R.id.btn_11)
-    public void onBtn11Clicked() {
-        click(btn11);
-    }
-
-    @OnClick(R.id.btn_12)
-    public void onBtn12Clicked() {
-        click(btn12);
-    }
-
-    @OnClick(R.id.btn_20)
-    public void onBtn20Clicked() {
-        click(btn20);
-    }
-
-    @OnClick(R.id.btn_21)
-    public void onBtn21Clicked() {
-        click(btn21);
-    }
-
-    @OnClick(R.id.btn_22)
-    public void onBtn22Clicked() {
-        click(btn22);
-    }
-
-    private void click(Button btn) {
-
-        if (player1Turn) {
-
-            btn.setTextColor(getResources().getColor(R.color.colorAccent));
-            btn.setText(getResources().getString(R.string.x));
-
+        if (symbol.equals(getString(R.string.x))) {
+            button.setTextColor(getResources().getColor(R.color.colorAccent));
         } else {
-
-            btn.setTextColor(getResources().getColor(R.color.colorAccentDemo));
-            btn.setText(getResources().getString(R.string.o));
-
+            button.setTextColor(getResources().getColor(R.color.colorAccentDemo));
         }
 
-        roundCount++;
+        button.setText(symbol);
+        // roundCount++;
+
+        //users cant click the same button
+        button.setEnabled(false);
+
+    }
+
+    private void checkWinner(ActiveGame updatedActiveGame) {
 
         //Check winner after  round 5
         //Before that nobody can win
-        if (roundCount >= 5) {
+        if (activeGame.getRoundCount() >= 5) {
 
             //check if there is a winner
-            if (checkForWin()) {
-                pronounceWinner(player1Turn);
+            if (isThereAWinner()) {
+                pronounceWinner(updatedActiveGame);
             }
             //if roundCount is 9, then draw
             //else continue;
-            else if (roundCount == 9) {
+            else if (activeGame.getRoundCount() == 9) {
                 callDraw();
             }
 
         }
-
-        //change player turn
-        player1Turn = !player1Turn;
-
-        //user cant click the same button
-        btn.setEnabled(false);
     }
 
-
-    private boolean checkForWin() {
+    private boolean isThereAWinner() {
 
         String[][] buttonStatus = new String[3][3];
 
@@ -206,23 +308,24 @@ public class OnlineGameActivity extends AppCompatActivity {
         return false;
     }
 
-    private void pronounceWinner(boolean player1Turn) {
+    private void pronounceWinner(ActiveGame updatedActiveGame) {
 
-        if (player1Turn) {
-            //player1 wins
-            tvWinner.setText(getResources().getString(R.string.player1_wins));
+        //TODO second players cant see winner in real time, he sees after playing one more round
+        if (ActiveGameOperator.checkCurrentTurnPlayer(updatedActiveGame.getoPlayer().getPlayer(), updatedActiveGame)) {
+            //XPlayer wins
+            tvWinner.setText(getResources().getString(R.string.player_online_wins, activeGame.getxPlayer().getPlayer().getUsername()));
             tvWinner.setTextColor(getResources().getColor(R.color.colorAccent));
 
         } else {
-            //player2 wins
-            tvWinner.setText(getResources().getString(R.string.player2_wins));
+            //OPlayer wins
+            tvWinner.setText(getResources().getString(R.string.player_online_wins, activeGame.getoPlayer().getPlayer().getUsername()));
             tvWinner.setTextColor(getResources().getColor(R.color.colorAccentDemo));
 
         }
 
-        disableButtons();
-        makeRestartVisible();
-        makeWinnerVisible();
+        ActiveGameOperator.disableButtons(buttonList);
+        ActiveGameOperator.makeRestartVisible(tvPlayAgain);
+        ActiveGameOperator.makeWinnerVisible(tvWinner);
 
     }
 
@@ -231,9 +334,9 @@ public class OnlineGameActivity extends AppCompatActivity {
         tvWinner.setText(getResources().getString(R.string.draw));
         tvWinner.setTextColor(getResources().getColor(R.color.drawGray));
 
-        disableButtons();
-        makeRestartVisible();
-        makeWinnerVisible();
+        ActiveGameOperator.disableButtons(buttonList);
+        ActiveGameOperator.makeRestartVisible(tvPlayAgain);
+        ActiveGameOperator.makeWinnerVisible(tvWinner);
 
     }
 
@@ -241,71 +344,111 @@ public class OnlineGameActivity extends AppCompatActivity {
     @OnClick(R.id.tv_play_again)
     public void onTvPlayAgainClicked() {
 
-        enableButtons();
-        resetButtonStatus();
-        makeRestartInvisible();
-        makeWinnerInvisible();
+        ActiveGameOperator.enableButtons(buttonList);
+        ActiveGameOperator.resetButtonStatus(buttonList);
+        ActiveGameOperator.makeRestartInvisible(tvPlayAgain);
+        ActiveGameOperator.makeWinnerInvisible(tvWinner);
 
-        roundCount = 0;
-        player1Turn = true;
-    }
-
-    private void makeRestartVisible() {
-        tvPlayAgain.setVisibility(View.VISIBLE);
-    }
-
-    private void makeRestartInvisible() {
-        tvPlayAgain.setVisibility(View.GONE);
+        activeGame.setRoundCount(0);
 
     }
 
-    private void makeWinnerInvisible() {
-        tvWinner.setVisibility(View.GONE);
-    }
+    private void getPlayersInfo() {
 
-    private void makeWinnerVisible() {
-        tvWinner.setVisibility(View.VISIBLE);
-    }
-
-    private void disableButtons() {
-
-        btn00.setEnabled(false);
-        btn01.setEnabled(false);
-        btn02.setEnabled(false);
-        btn10.setEnabled(false);
-        btn11.setEnabled(false);
-        btn12.setEnabled(false);
-        btn20.setEnabled(false);
-        btn21.setEnabled(false);
-        btn22.setEnabled(false);
+        Intent intent = getIntent();
+        myPlayer = intent.getParcelableExtra((getString(R.string.intent_my_player)));
+        activeGame = intent.getParcelableExtra((getString(R.string.intent_active_game)));
 
     }
 
-    private void enableButtons() {
+    private void printPlayerNames(ActiveGame activeGame) {
+        tvPlayer1Name.setText(getString(R.string.player1_name, activeGame.getxPlayer().getPlayer().getUsername()));
+        tvPlayer2Name.setText(getString(R.string.player2_name, activeGame.getoPlayer().getPlayer().getUsername()));
+    }
 
-        btn00.setEnabled(true);
-        btn01.setEnabled(true);
-        btn02.setEnabled(true);
-        btn10.setEnabled(true);
-        btn11.setEnabled(true);
-        btn12.setEnabled(true);
-        btn20.setEnabled(true);
-        btn21.setEnabled(true);
-        btn22.setEnabled(true);
+
+    private void setTagToButtons() {
+        btn00.setTag("00");
+        btn01.setTag("01");
+        btn02.setTag("02");
+        btn10.setTag("10");
+        btn11.setTag("11");
+        btn12.setTag("12");
+        btn20.setTag("20");
+        btn21.setTag("21");
+        btn22.setTag("22");
 
     }
 
-    private void resetButtonStatus() {
+    private List<Button> addButtonsToList() {
 
-        btn00.setText("");
-        btn01.setText("");
-        btn02.setText("");
-        btn10.setText("");
-        btn11.setText("");
-        btn12.setText("");
-        btn20.setText("");
-        btn21.setText("");
-        btn22.setText("");
+        List<Button> buttonList = new ArrayList<>();
+        buttonList.add(btn00);
+        buttonList.add(btn01);
+        buttonList.add(btn02);
+        buttonList.add(btn10);
+        buttonList.add(btn11);
+        buttonList.add(btn12);
+        buttonList.add(btn20);
+        buttonList.add(btn21);
+        buttonList.add(btn22);
+
+        return buttonList;
 
     }
+
+    @OnClick(R.id.btn_00)
+    public void onBtn00Clicked() {
+        btn00.setTag("00");
+        click(btn00);
+    }
+
+    @OnClick(R.id.btn_01)
+    public void onBtn01Clicked() {
+        btn01.setTag("01");
+        click(btn01);
+    }
+
+    @OnClick(R.id.btn_02)
+    public void onBtn02Clicked() {
+        btn02.setTag("02");
+        click(btn02);
+    }
+
+    @OnClick(R.id.btn_10)
+    public void onBtn10Clicked() {
+        btn10.setTag("10");
+        click(btn10);
+    }
+
+    @OnClick(R.id.btn_11)
+    public void onBtn11Clicked() {
+        btn11.setTag("11");
+        click(btn11);
+    }
+
+    @OnClick(R.id.btn_12)
+    public void onBtn12Clicked() {
+        btn12.setTag("12");
+        click(btn12);
+    }
+
+    @OnClick(R.id.btn_20)
+    public void onBtn20Clicked() {
+        btn20.setTag("20");
+        click(btn20);
+    }
+
+    @OnClick(R.id.btn_21)
+    public void onBtn21Clicked() {
+        btn21.setTag("21");
+        click(btn21);
+    }
+
+    @OnClick(R.id.btn_22)
+    public void onBtn22Clicked() {
+        btn22.setTag("22");
+        click(btn22);
+    }
+
 }

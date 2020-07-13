@@ -57,10 +57,12 @@ public class GameInviteDialog extends DialogFragment {
                 .setPositiveButton(R.string.accept_game_invite, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        
                         FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
                                 .child(gameInvite.getInvitee().getPlayer().getUserId())
                                 .child(getResources().getString(R.string.path_inviteStatus))
                                 .setValue(InviteStatus.ACCEPTED);
+
                         gameInviteDialogListener.createActiveGameNode(gameInvite);
                     }
                 });

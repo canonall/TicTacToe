@@ -1,7 +1,6 @@
 package com.canonal.tictactoe.utility.operator;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.enums.InviteStatus;
@@ -74,7 +73,7 @@ public class GameInviteOperator {
 
         FirebaseDatabase.getInstance().getReference()
                 .child(context.getResources().getString(R.string.path_gameInvite))
-                .child(activeGame.getOplayer().getPlayer().getUserId())
+                .child(activeGame.getoPlayer().getPlayer().getUserId())
                 .removeValue();
 
     }

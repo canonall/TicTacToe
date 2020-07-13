@@ -3,12 +3,11 @@ package com.canonal.tictactoe.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Oplayer implements Parcelable {
+public class XPlayer implements Parcelable {
     Player player;
     String symbol;
 
-
-    public Oplayer(){}
+    public XPlayer(){}
 
     public Player getPlayer() {
         return player;
@@ -28,7 +27,7 @@ public class Oplayer implements Parcelable {
 
 
 
-    protected Oplayer(Parcel in) {
+    protected XPlayer(Parcel in) {
         player = (Player) in.readValue(Player.class.getClassLoader());
         symbol = in.readString();
     }
@@ -45,15 +44,15 @@ public class Oplayer implements Parcelable {
     }
 
     @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Oplayer> CREATOR = new Parcelable.Creator<Oplayer>() {
+    public static final Parcelable.Creator<XPlayer> CREATOR = new Parcelable.Creator<XPlayer>() {
         @Override
-        public Oplayer createFromParcel(Parcel in) {
-            return new Oplayer(in);
+        public XPlayer createFromParcel(Parcel in) {
+            return new XPlayer(in);
         }
 
         @Override
-        public Oplayer[] newArray(int size) {
-            return new Oplayer[size];
+        public XPlayer[] newArray(int size) {
+            return new XPlayer[size];
         }
     };
 }
