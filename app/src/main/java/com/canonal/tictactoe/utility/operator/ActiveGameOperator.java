@@ -10,6 +10,7 @@ import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.OPlayer;
 import com.canonal.tictactoe.model.Player;
 import com.canonal.tictactoe.model.XPlayer;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -86,5 +87,18 @@ public class ActiveGameOperator {
     public static boolean checkXPlayer(Player player, ActiveGame activeGame) {
         return player.getUserId().equals(activeGame.getxPlayer().getPlayer().getUserId()) &&
                 player.getUsername().equals(activeGame.getxPlayer().getPlayer().getUsername());
+    }
+
+    public static void showGameFinishedUi(List<Button> buttonList,TextView tvPlayAgain,TextView tvWinner){
+        disableButtons(buttonList);
+        makeRestartVisible(tvPlayAgain);
+        makeWinnerVisible(tvWinner);
+    }
+
+    public static void pushActiveGameToFirebase(ActiveGame activeGame,Context context){
+        FirebaseDatabase.getInstance().getReference()
+                .child(context.getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                .setValue(activeGame);
     }
 }

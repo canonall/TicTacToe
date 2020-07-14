@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.Move;
+import com.canonal.tictactoe.model.OPlayer;
 import com.canonal.tictactoe.model.Player;
+import com.canonal.tictactoe.model.XPlayer;
 import com.canonal.tictactoe.utility.operator.ActiveGameOperator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -108,40 +110,7 @@ public class OnlineGameActivity extends AppCompatActivity {
                     }
                 });
 
-    /*    FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.path_activeGame))
-                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
-                .child(getString(R.string.path_move)).child(String.valueOf(roundCount)).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                Move move = dataSnapshot.getValue(Move.class);
-
-                if (move != null) {
-                    String symbol = move.getMoveSymbol();
-                    String position = move.getMovePosition();
-
-                    for (Button button : buttonList) {
-                        if (button.getTag().equals(position)) {
-                            updateBoard(button, symbol);
-                            break;
-                        }
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-     */
-
     }
-
 
     private void click(final Button btn) {
 
@@ -174,47 +143,14 @@ public class OnlineGameActivity extends AppCompatActivity {
             int roundCount = activeGame.getRoundCount();
             activeGame.setRoundCount(++roundCount);
 
-            FirebaseDatabase.getInstance().getReference()
+            ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
+
+           /* FirebaseDatabase.getInstance().getReference()
                     .child(getString(R.string.path_activeGame))
                     .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
-                    .setValue(activeGame);
+                    .setValue(activeGame);*/
 
-      /*  FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.path_activeGame))
-                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
-                .child(getString(R.string.path_move))
-                .child(String.valueOf(roundCount))
-                .setValue(move);
-       */
-
-            // roundCount++;
-
-            /*
-            //Check winner after  round 5
-            //Before that nobody can win
-            if (roundCount >= 5) {
-
-                //check if there is a winner
-                if (checkForWin()) {
-                    // pronounceWinner(xPlayerTurn);
-                }
-                //if roundCount is 9, then draw
-                //else continue;
-                else if (roundCount == 9) {
-                    callDraw();
-                }
-
-            }
-
-            //change player turn
-            // xPlayerTurn = !xPlayerTurn;
-
-            //user cant click the same button
-            btn.setEnabled(false);
-
-             */
         }
-
 
     }
 
@@ -227,7 +163,6 @@ public class OnlineGameActivity extends AppCompatActivity {
         }
 
         button.setText(symbol);
-        // roundCount++;
 
         //users cant click the same button
         button.setEnabled(false);
@@ -238,7 +173,7 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         //Check winner after  round 5
         //Before that nobody can win
-        if (activeGame.getRoundCount() >= 5) {
+        if (updatedActiveGame.getRoundCount() >= 5) {
 
             //check if there is a winner
             if (isThereAWinner()) {
@@ -246,7 +181,7 @@ public class OnlineGameActivity extends AppCompatActivity {
             }
             //if roundCount is 9, then draw
             //else continue;
-            else if (activeGame.getRoundCount() == 9) {
+            else if (updatedActiveGame.getRoundCount() == 9) {
                 callDraw();
             }
 
@@ -310,7 +245,6 @@ public class OnlineGameActivity extends AppCompatActivity {
 
     private void pronounceWinner(ActiveGame updatedActiveGame) {
 
-        //TODO second players cant see winner in real time, he sees after playing one more round
         if (ActiveGameOperator.checkCurrentTurnPlayer(updatedActiveGame.getoPlayer().getPlayer(), updatedActiveGame)) {
             //XPlayer wins
             tvWinner.setText(getResources().getString(R.string.player_online_wins, activeGame.getxPlayer().getPlayer().getUsername()));
@@ -323,9 +257,7 @@ public class OnlineGameActivity extends AppCompatActivity {
 
         }
 
-        ActiveGameOperator.disableButtons(buttonList);
-        ActiveGameOperator.makeRestartVisible(tvPlayAgain);
-        ActiveGameOperator.makeWinnerVisible(tvWinner);
+        ActiveGameOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 
     }
 
@@ -334,12 +266,9 @@ public class OnlineGameActivity extends AppCompatActivity {
         tvWinner.setText(getResources().getString(R.string.draw));
         tvWinner.setTextColor(getResources().getColor(R.color.drawGray));
 
-        ActiveGameOperator.disableButtons(buttonList);
-        ActiveGameOperator.makeRestartVisible(tvPlayAgain);
-        ActiveGameOperator.makeWinnerVisible(tvWinner);
+        ActiveGameOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 
     }
-
 
     @OnClick(R.id.tv_play_again)
     public void onTvPlayAgainClicked() {
@@ -349,7 +278,16 @@ public class OnlineGameActivity extends AppCompatActivity {
         ActiveGameOperator.makeRestartInvisible(tvPlayAgain);
         ActiveGameOperator.makeWinnerInvisible(tvWinner);
 
-        activeGame.setRoundCount(0);
+        ActiveGame restartActiveGame = changeSides(activeGame);
+        ActiveGameOperator.pushActiveGameToFirebase(restartActiveGame, this);
+
+    }
+
+    private ActiveGame changeSides(ActiveGame activeGame) {
+
+        XPlayer updatedXPlayer = ActiveGameOperator.getXPlayer(activeGame.getoPlayer().getPlayer(), this);
+        OPlayer updatedOPlayer = ActiveGameOperator.getOPlayer(activeGame.getxPlayer().getPlayer(), this);
+        return ActiveGameOperator.getActiveGame(updatedXPlayer, updatedOPlayer);
 
     }
 

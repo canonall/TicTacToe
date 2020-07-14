@@ -117,6 +117,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
                                     break;
                                 }
                                 if (GameInviteOperator.isMyInviteAccepted(gameInvite, myPlayer)) {
+
                                     FirebaseDatabase.getInstance().getReference().child(getString(R.string.path_activeGame))
                                             .child(gameInvite.getInvitee().getPlayer().getUserId() + gameInvite.getInviter().getPlayer().getUserId())
                                             .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -131,6 +132,11 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
                                                 }
                                             });
+                                    break;
+                                } else {
+                                    Toast.makeText(getApplicationContext(),
+                                            " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
+                                            .show();
                                     break;
                                 }
                             }
@@ -231,7 +237,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
         //add to activeGame node
         FirebaseDatabase.getInstance().getReference()
-                .child(getResources().getString(R.string.path_activeGame))
+                .child(getString(R.string.path_activeGame))
                 .child(gameInvite.getInvitee().getPlayer().getUserId() + gameInvite.getInviter().getPlayer().getUserId())
                 .setValue(activeGame);
 
@@ -245,7 +251,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         WaitingRoomOperator.removePlayersFromWaitingRoomNode(activeGame, this);
 
         Intent intent = new Intent(WaitingRoomActivity.this, OnlineGameActivity.class);
-        intent.putExtra(getString(R.string.intent_my_player),myPlayer);
+        intent.putExtra(getString(R.string.intent_my_player), myPlayer);
         intent.putExtra(getString(R.string.intent_active_game), activeGame);
         startActivity(intent);
     }

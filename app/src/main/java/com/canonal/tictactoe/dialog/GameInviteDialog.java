@@ -51,13 +51,19 @@ public class GameInviteDialog extends DialogFragment {
                 .setNegativeButton(R.string.reject_game_invite, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO
+                        //TODO tell inviter that he has been rejected in a Toast
+
+                        FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
+                                .child(gameInvite.getInvitee().getPlayer().getUserId())
+                                .child(getResources().getString(R.string.path_inviteStatus))
+                                .setValue(InviteStatus.REJECTED);
+
                     }
                 })
                 .setPositiveButton(R.string.accept_game_invite, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        
+
                         FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
                                 .child(gameInvite.getInvitee().getPlayer().getUserId())
                                 .child(getResources().getString(R.string.path_inviteStatus))
