@@ -28,11 +28,12 @@ public class GameInviteDialog extends DialogFragment {
     private Context context;
     private GameInvite gameInvite;
     private GameInviteDialogListener gameInviteDialogListener;
-    private boolean isInviteAccepted;
+    private boolean playAgainRequest;
 
-    public GameInviteDialog(Context context, GameInvite gameInvite) {
+    public GameInviteDialog(Context context, GameInvite gameInvite, boolean playAgainRequest) {
         this.context = context;
         this.gameInvite = gameInvite;
+        this.playAgainRequest = playAgainRequest;
     }
 
     @NonNull
@@ -44,14 +45,20 @@ public class GameInviteDialog extends DialogFragment {
         View view = layoutInflater.inflate(R.layout.dialog_game_invite, null);
 
         TextView tvInviteText = view.findViewById(R.id.tv_invite_text);
-        tvInviteText.setText(context.getResources().getString(R.string.invite_text, gameInvite.getInviter().getPlayer().getUsername()));
+
+        if (playAgainRequest){
+            tvInviteText.setText(context.getResources().getString(R.string.play_again_text, gameInvite.getInviter().getPlayer().getUsername()));
+
+        }else {
+            tvInviteText.setText(context.getResources().getString(R.string.invite_text, gameInvite.getInviter().getPlayer().getUsername()));
+
+        }
 
         builder.setView(view)
 
                 .setNegativeButton(R.string.reject_game_invite, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO tell inviter that he has been rejected in a Toast
 
                         FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
                                 .child(gameInvite.getInvitee().getPlayer().getUserId())

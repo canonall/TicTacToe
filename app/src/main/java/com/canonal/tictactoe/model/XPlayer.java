@@ -7,7 +7,8 @@ public class XPlayer implements Parcelable {
     Player player;
     String symbol;
 
-    public XPlayer(){}
+    public XPlayer() {
+    }
 
     public Player getPlayer() {
         return player;
@@ -24,8 +25,6 @@ public class XPlayer implements Parcelable {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
-
-
 
     protected XPlayer(Parcel in) {
         player = (Player) in.readValue(Player.class.getClassLoader());

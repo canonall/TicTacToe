@@ -37,8 +37,10 @@
     <string name="path_player">player</string>
     <string name="path_inviteStatus">inviteStatus</string>
     <string name="path_move">move</string>
+    <string name="path_playAgainRequest">move</string>
 
     <string name="invite_text">%1$s invites you to play!</string>
+    <string name="play_again_text">%1$s wants to play again!</string>
 
     <string name="player1_name">X: %1$s</string>
     <string name="player2_name">O: %1$s</string>

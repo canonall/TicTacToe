@@ -7,6 +7,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -132,13 +134,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
                                                 }
                                             });
-                                    break;
-                                } else {
+                                } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
                                     Toast.makeText(getApplicationContext(),
                                             " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
                                             .show();
-                                    break;
                                 }
+                                break;
                             }
                         }
                     }
@@ -215,8 +216,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     private void createGameInviteDialog(GameInvite gameInvite) {
 
-        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite);
-        gameInviteDialog.show(getSupportFragmentManager(), "GameInvite Dialog");
+//        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
+//        gameInviteDialog.show(getSupportFragmentManager(), "GameInvite Dialog");
+//        gameInviteDialog.setCancelable(false);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
+        fragmentManager.beginTransaction().add(gameInviteDialog, "GameInvite Dialog").commitAllowingStateLoss();
         gameInviteDialog.setCancelable(false);
 
     }

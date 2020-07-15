@@ -8,7 +8,9 @@ public class OPlayer implements Parcelable {
     String symbol;
 
 
-    public OPlayer(){}
+
+    public OPlayer() {
+    }
 
     public Player getPlayer() {
         return player;
@@ -25,8 +27,6 @@ public class OPlayer implements Parcelable {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
-
-
 
     protected OPlayer(Parcel in) {
         player = (Player) in.readValue(Player.class.getClassLoader());

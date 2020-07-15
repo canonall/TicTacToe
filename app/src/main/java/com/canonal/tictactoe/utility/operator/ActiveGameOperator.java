@@ -89,16 +89,25 @@ public class ActiveGameOperator {
                 player.getUsername().equals(activeGame.getxPlayer().getPlayer().getUsername());
     }
 
-    public static void showGameFinishedUi(List<Button> buttonList,TextView tvPlayAgain,TextView tvWinner){
+    public static void showGameFinishedUi(List<Button> buttonList, TextView tvPlayAgain, TextView tvWinner) {
         disableButtons(buttonList);
         makeRestartVisible(tvPlayAgain);
         makeWinnerVisible(tvWinner);
     }
 
-    public static void pushActiveGameToFirebase(ActiveGame activeGame,Context context){
+    public static void pushActiveGameToFirebase(ActiveGame activeGame, Context context) {
+
         FirebaseDatabase.getInstance().getReference()
                 .child(context.getString(R.string.path_activeGame))
                 .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
                 .setValue(activeGame);
+    }
+
+    public static ActiveGame changeSides(ActiveGame activeGame, Context context) {
+
+        XPlayer updatedXPlayer = getXPlayer(activeGame.getoPlayer().getPlayer(), context);
+        OPlayer updatedOPlayer = getOPlayer(activeGame.getxPlayer().getPlayer(), context);
+        return getActiveGame(updatedXPlayer, updatedOPlayer);
+
     }
 }

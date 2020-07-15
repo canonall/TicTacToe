@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GameInviteOperator {
 
-    public static Invitee getInviteePlayer(List<Player> playerList, int position) {
+    public static Invitee getInviteePlayerFromList(List<Player> playerList, int position) {
 
         Invitee inviteePlayer = new Invitee();
 
@@ -31,10 +31,10 @@ public class GameInviteOperator {
 
     }
 
-    public static Inviter getInviterPlayer(Player myPlayer) {
+    public static Inviter getInviterPlayer(Player player) {
 
         Inviter inviterPlayer = new Inviter();
-        inviterPlayer.setPlayer(myPlayer);
+        inviterPlayer.setPlayer(player);
         return inviterPlayer;
 
     }
@@ -67,6 +67,16 @@ public class GameInviteOperator {
         return myPlayer.getUserId().equals(inviterPlayerId)
                 && myPlayer.getUsername().equals(inviterPlayerName)
                 && inviteStatus.equals(InviteStatus.ACCEPTED);
+    }
+    public static boolean isMyInviteRejected(GameInvite gameInvite, Player myPlayer) {
+
+        String inviterPlayerId = gameInvite.getInviter().getPlayer().getUserId();
+        String inviterPlayerName = gameInvite.getInviter().getPlayer().getUsername();
+        InviteStatus inviteStatus = gameInvite.getInviteStatus();
+
+        return myPlayer.getUserId().equals(inviterPlayerId)
+                && myPlayer.getUsername().equals(inviterPlayerName)
+                && inviteStatus.equals(InviteStatus.REJECTED);
     }
 
     public static void removePlayersFromGameInviteNode(ActiveGame activeGame, Context context) {

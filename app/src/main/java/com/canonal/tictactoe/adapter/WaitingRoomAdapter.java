@@ -94,7 +94,7 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
                 @Override
                 public void onClick(View view) {
 
-                    Invitee inviteePlayer = GameInviteOperator.getInviteePlayer(playerList, getAdapterPosition());
+                    Invitee inviteePlayer = GameInviteOperator.getInviteePlayerFromList(playerList, getAdapterPosition());
                     Inviter inviterPlayer = GameInviteOperator.getInviterPlayer(myPlayer);
                     GameInvite gameInvite = GameInviteOperator.getGameInvite(inviteePlayer, inviterPlayer, InviteStatus.WAITING);
 
