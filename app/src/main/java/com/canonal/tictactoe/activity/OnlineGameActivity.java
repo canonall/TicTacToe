@@ -2,12 +2,14 @@ package com.canonal.tictactoe.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.dialog.GameInviteDialog;
@@ -23,6 +25,7 @@ import com.canonal.tictactoe.utility.operator.ActiveGameOperator;
 import com.canonal.tictactoe.utility.operator.GameInviteOperator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -34,6 +37,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class OnlineGameActivity extends AppCompatActivity implements GameInviteDialogListener {
+
+    private static final String TAG = "ONLINE_GAME";
 
     @BindView(R.id.btn_00)
     Button btn00;
@@ -66,6 +71,11 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private List<Button> buttonList;
     private ActiveGame activeGame;
     private Player myPlayer;
+    private ValueEventListener activeGameEventListener;
+
+    private DatabaseReference gameInviteReference;
+    private ValueEventListener gameInviteEventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,79 +89,87 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         getPlayersInfo();
         printPlayerNames(activeGame);
 
-        FirebaseDatabase.getInstance().getReference()
+        DatabaseReference activeGameReference = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.path_activeGame))
-                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId());
 
-                        ActiveGame updatedActiveGame = dataSnapshot.getValue(ActiveGame.class);
+        activeGameEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        if (updatedActiveGame != null) {
-                            if (updatedActiveGame.getMove() != null) {
+                ActiveGame updatedActiveGame = dataSnapshot.getValue(ActiveGame.class);
 
-                                String symbol = updatedActiveGame.getMove().getMoveSymbol();
-                                String position = updatedActiveGame.getMove().getMovePosition();
+                if (updatedActiveGame != null) {
+                    if (updatedActiveGame.getMove() != null) {
 
-                                for (Button button : buttonList) {
-                                    if (button.getTag().equals(position)) {
-                                        updateBoard(button, symbol);
-                                        checkWinner(updatedActiveGame);
-                                        break;
-                                    }
-                                }
+                        String symbol = updatedActiveGame.getMove().getMoveSymbol();
+                        String position = updatedActiveGame.getMove().getMovePosition();
 
-                            }
-
-                        }
-
-
-                        activeGame = updatedActiveGame;
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-        //TODO
-        FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-
-                            GameInvite gameInvite = child.getValue(GameInvite.class);
-
-                            if (gameInvite != null) {
-
-                                if (GameInviteOperator.isMyPlayerInvited(gameInvite, myPlayer)) {
-                                    createGameInviteDialog(gameInvite);
-                                }
-
-                                if (GameInviteOperator.isMyInviteAccepted(gameInvite, myPlayer)) {
-                                    restartActiveGame();
-
-                                } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
-
-                                    //TODO return him waiting room
-                                    Toast.makeText(getApplicationContext(),
-                                            " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
-                                            .show();
-
-                                    startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
-                                }
-
+                        for (Button button : buttonList) {
+                            if (button.getTag().equals(position)) {
+                                updateBoard(button, symbol);
+                                checkWinner(updatedActiveGame);
+                                break;
                             }
                         }
+
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+
+
+                activeGame = updatedActiveGame;
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        activeGameReference.addValueEventListener(activeGameEventListener);
+
+        //read game invites
+        gameInviteReference = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite));
+        gameInviteEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+
+                    GameInvite gameInvite = child.getValue(GameInvite.class);
+
+                    if (gameInvite != null) {
+
+                        if (GameInviteOperator.isMyPlayerInvited(gameInvite, myPlayer)) {
+                            createGameInviteDialog(gameInvite);
+                        }
+
+                        if (GameInviteOperator.isMyInviteAccepted(gameInvite, myPlayer)) {
+                            restartActiveGame();
+
+                        } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
+
+                            Toast.makeText(getApplicationContext(),
+                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
+                                    .show();
+
+                            gameInviteReference.removeEventListener(gameInviteEventListener);
+                            startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
+                            finish();
+                        }
+
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        gameInviteReference.addValueEventListener(gameInviteEventListener);
 
     }
 
@@ -285,6 +303,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private void pronounceWinner(ActiveGame updatedActiveGame) {
 
         if (ActiveGameOperator.checkCurrentTurnPlayer(updatedActiveGame.getoPlayer().getPlayer(), updatedActiveGame)) {
+
             //XPlayer wins
             tvWinner.setText(getResources().getString(R.string.player_online_wins, activeGame.getxPlayer().getPlayer().getUsername()));
             tvWinner.setTextColor(getResources().getColor(R.color.colorAccent));
@@ -311,11 +330,6 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     @OnClick(R.id.tv_play_again)
     public void onTvPlayAgainClicked() {
-/*
-        ActiveGameOperator.enableButtons(buttonList);
-        ActiveGameOperator.resetButtonStatus(buttonList);
-        ActiveGameOperator.makeRestartInvisible(tvPlayAgain);
-        ActiveGameOperator.makeWinnerInvisible(tvWinner);*/
 
         GameInvite gameInvite = createNewGameInvite();
 
@@ -344,8 +358,10 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     private void createGameInviteDialog(GameInvite gameInvite) {
 
-        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, true);
-        gameInviteDialog.show(getSupportFragmentManager(), "GameInvite Dialog");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
+        fragmentManager.beginTransaction().add(gameInviteDialog, "GameInvite Dialog").commitAllowingStateLoss();
         gameInviteDialog.setCancelable(false);
 
     }
@@ -358,11 +374,61 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     }
 
+    @Override
+    public void acceptGameInvite(GameInvite gameInvite) {
+        restartActiveGame();
+        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+
+    }
+
+    @Override
+    public void rejectGameInvite(GameInvite gameInvite) {
+
+        Log.d(TAG, "rejectGameInvite: invite rejected by invitee" + gameInvite.getInvitee().getPlayer().getUsername());
+
+        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+        ActiveGameOperator.removeActiveGame(activeGame, this);
+
+        gameInviteReference.removeEventListener(gameInviteEventListener);
+
+        startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
+        finish();
+
+    }
+
+    private void restartActiveGame() {
+
+        resetGameBoard();
+
+        //Delete previous activeGame
+        ActiveGameOperator.removeActiveGame(activeGame, this);
+
+        //Create new activeGame and push to Firebase
+        activeGame = ActiveGameOperator.changeSides(activeGame, this);
+        ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
+
+        //listen changes with reference
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId());
+
+        databaseReference.addValueEventListener(activeGameEventListener);
+
+        printPlayerNames(activeGame);
+
+    }
+
+    private void resetGameBoard() {
+        ActiveGameOperator.enableButtons(buttonList);
+        ActiveGameOperator.resetButtonStatus(buttonList);
+        ActiveGameOperator.makeRestartInvisible(tvPlayAgain);
+        ActiveGameOperator.makeWinnerInvisible(tvWinner);
+    }
+
     private void printPlayerNames(ActiveGame activeGame) {
         tvPlayer1Name.setText(getString(R.string.player1_name, activeGame.getxPlayer().getPlayer().getUsername()));
         tvPlayer2Name.setText(getString(R.string.player2_name, activeGame.getoPlayer().getPlayer().getUsername()));
     }
-
 
     private void setTagToButtons() {
         btn00.setTag("00");
@@ -446,26 +512,5 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     public void onBtn22Clicked() {
         btn22.setTag("22");
         click(btn22);
-    }
-
-    @Override
-    public void createActiveGameNode(GameInvite gameInvite) {
-
-        restartActiveGame();
-
-    }
-
-    private void restartActiveGame() {
-
-
-        ActiveGameOperator.enableButtons(buttonList);
-        ActiveGameOperator.resetButtonStatus(buttonList);
-        ActiveGameOperator.makeRestartInvisible(tvPlayAgain);
-        ActiveGameOperator.makeWinnerInvisible(tvWinner);
-
-        //TODO iki defa değişim oluyor sanırım
-        ActiveGame restartActiveGame = ActiveGameOperator.changeSides(activeGame, this);
-        activeGame = restartActiveGame;
-        ActiveGameOperator.pushActiveGameToFirebase(restartActiveGame, this);
     }
 }

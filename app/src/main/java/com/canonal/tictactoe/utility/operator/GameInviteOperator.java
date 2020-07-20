@@ -68,6 +68,7 @@ public class GameInviteOperator {
                 && myPlayer.getUsername().equals(inviterPlayerName)
                 && inviteStatus.equals(InviteStatus.ACCEPTED);
     }
+
     public static boolean isMyInviteRejected(GameInvite gameInvite, Player myPlayer) {
 
         String inviterPlayerId = gameInvite.getInviter().getPlayer().getUserId();
@@ -79,11 +80,11 @@ public class GameInviteOperator {
                 && inviteStatus.equals(InviteStatus.REJECTED);
     }
 
-    public static void removePlayersFromGameInviteNode(ActiveGame activeGame, Context context) {
+    public static void removePlayersFromGameInvite(GameInvite gameInvite, Context context) {
 
         FirebaseDatabase.getInstance().getReference()
                 .child(context.getResources().getString(R.string.path_gameInvite))
-                .child(activeGame.getoPlayer().getPlayer().getUserId())
+                .child(gameInvite.getInvitee().getPlayer().getUserId())
                 .removeValue();
 
     }

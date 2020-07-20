@@ -4,5 +4,6 @@ import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Player;
 
 public interface GameInviteDialogListener {
-    void createActiveGameNode(GameInvite gameInvite);
+    void acceptGameInvite(GameInvite gameInvite);
+    void rejectGameInvite(GameInvite gameInvite);
 }

@@ -110,4 +110,11 @@ public class ActiveGameOperator {
         return getActiveGame(updatedXPlayer, updatedOPlayer);
 
     }
+
+    public static void removeActiveGame(ActiveGame activeGame, Context context) {
+
+        FirebaseDatabase.getInstance().getReference().child(context.getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                .removeValue();
+    }
 }

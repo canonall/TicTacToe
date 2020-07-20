@@ -8,7 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,12 +45,14 @@ import butterknife.ButterKnife;
 
 public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingRoomItemClickListener, UsernameDialogListener, GameInviteDialogListener {
 
-    private static final String TAG = "OnlineGame";
+    private static final String TAG = "WAITING_ROOM";
 
     @BindView(R.id.rv_waiting_room_players)
     RecyclerView rvWaitingRoomPlayers;
 
     private Player myPlayer;
+    private DatabaseReference databaseReference;
+    private ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,54 +102,59 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     }
 
     private void checkGameInvites() {
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(getString(R.string.path_gameInvite));
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
 
-        FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    GameInvite gameInvite = child.getValue(GameInvite.class);
 
-                            GameInvite gameInvite = child.getValue(GameInvite.class);
+                    if (gameInvite != null) {
 
-                            if (gameInvite != null) {
+                        Log.d(TAG, "onDataChange: received invitee ID-->" + gameInvite.getInvitee().getPlayer().getUserId());
+                        Log.d(TAG, "onDataChange: received invitee  Name-->" + gameInvite.getInvitee().getPlayer().getUsername());
 
-                                Log.d(TAG, "onDataChange: received invitee ID-->" + gameInvite.getInvitee().getPlayer().getUserId());
-                                Log.d(TAG, "onDataChange: received invitee  Name-->" + gameInvite.getInvitee().getPlayer().getUsername());
-
-                                if (GameInviteOperator.isMyPlayerInvited(gameInvite, myPlayer)) {
-                                    createGameInviteDialog(gameInvite);
-                                    break;
-                                }
-                                if (GameInviteOperator.isMyInviteAccepted(gameInvite, myPlayer)) {
-
-                                    FirebaseDatabase.getInstance().getReference().child(getString(R.string.path_activeGame))
-                                            .child(gameInvite.getInvitee().getPlayer().getUserId() + gameInvite.getInviter().getPlayer().getUserId())
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    ActiveGame activeGame = dataSnapshot.getValue(ActiveGame.class);
-                                                    createMatch(activeGame);
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                }
-                                            });
-                                } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
-                                    Toast.makeText(getApplicationContext(),
-                                            " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
-                                            .show();
-                                }
-                                break;
-                            }
+                        if (GameInviteOperator.isMyPlayerInvited(gameInvite, myPlayer)) {
+                            createGameInviteDialog(gameInvite);
+                            break;
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if (GameInviteOperator.isMyInviteAccepted(gameInvite, myPlayer)) {
+
+                            FirebaseDatabase.getInstance().getReference().child(getString(R.string.path_activeGame))
+                                    .child(gameInvite.getInvitee().getPlayer().getUserId() + gameInvite.getInviter().getPlayer().getUserId())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            ActiveGame activeGame = dataSnapshot.getValue(ActiveGame.class);
+                                            createMatch(activeGame);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                        } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
+                            Toast.makeText(getApplicationContext(),
+                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                        break;
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        databaseReference.addValueEventListener(valueEventListener);
+
     }
 
     private void signInAnonymously(final Player myPlayer) {
@@ -216,10 +223,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     private void createGameInviteDialog(GameInvite gameInvite) {
 
-//        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
-//        gameInviteDialog.show(getSupportFragmentManager(), "GameInvite Dialog");
-//        gameInviteDialog.setCancelable(false);
-
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
@@ -236,26 +239,31 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     }
 
     @Override
-    public void createActiveGameNode(GameInvite gameInvite) {
+    public void acceptGameInvite(GameInvite gameInvite) {
 
         XPlayer xPlayer = ActiveGameOperator.getXPlayer(gameInvite.getInviter().getPlayer(), this);
         OPlayer oPlayer = ActiveGameOperator.getOPlayer(gameInvite.getInvitee().getPlayer(), this);
         ActiveGame activeGame = ActiveGameOperator.getActiveGame(xPlayer, oPlayer);
 
-        //add to activeGame node
-        FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.path_activeGame))
-                .child(gameInvite.getInvitee().getPlayer().getUserId() + gameInvite.getInviter().getPlayer().getUserId())
-                .setValue(activeGame);
+        ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
+        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+        WaitingRoomOperator.removePlayersFromWaitingRoom(activeGame, this);
 
         createMatch(activeGame);
+    }
+
+    @Override
+    public void rejectGameInvite(GameInvite gameInvite) {
+
+        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+        Log.d(TAG, "rejectGameInvite: invite rejected by invitee" + gameInvite.getInvitee().getPlayer().getUsername());
     }
 
 
     private void createMatch(ActiveGame activeGame) {
 
-        GameInviteOperator.removePlayersFromGameInviteNode(activeGame, this);
-        WaitingRoomOperator.removePlayersFromWaitingRoomNode(activeGame, this);
+        //prevents listener to listen from another activity
+        databaseReference.removeEventListener(valueEventListener);
 
         Intent intent = new Intent(WaitingRoomActivity.this, OnlineGameActivity.class);
         intent.putExtra(getString(R.string.intent_my_player), myPlayer);

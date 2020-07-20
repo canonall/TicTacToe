@@ -17,9 +17,6 @@ import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.enums.InviteStatus;
 import com.canonal.tictactoe.listener.GameInviteDialogListener;
 import com.canonal.tictactoe.model.GameInvite;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
 
@@ -46,10 +43,10 @@ public class GameInviteDialog extends DialogFragment {
 
         TextView tvInviteText = view.findViewById(R.id.tv_invite_text);
 
-        if (playAgainRequest){
+        if (playAgainRequest) {
             tvInviteText.setText(context.getResources().getString(R.string.play_again_text, gameInvite.getInviter().getPlayer().getUsername()));
 
-        }else {
+        } else {
             tvInviteText.setText(context.getResources().getString(R.string.invite_text, gameInvite.getInviter().getPlayer().getUsername()));
 
         }
@@ -65,8 +62,11 @@ public class GameInviteDialog extends DialogFragment {
                                 .child(getResources().getString(R.string.path_inviteStatus))
                                 .setValue(InviteStatus.REJECTED);
 
+                        gameInviteDialogListener.rejectGameInvite(gameInvite);
+
                     }
                 })
+
                 .setPositiveButton(R.string.accept_game_invite, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -76,7 +76,7 @@ public class GameInviteDialog extends DialogFragment {
                                 .child(getResources().getString(R.string.path_inviteStatus))
                                 .setValue(InviteStatus.ACCEPTED);
 
-                        gameInviteDialogListener.createActiveGameNode(gameInvite);
+                        gameInviteDialogListener.acceptGameInvite(gameInvite);
                     }
                 });
 
