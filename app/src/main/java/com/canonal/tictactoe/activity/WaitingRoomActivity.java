@@ -193,10 +193,10 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+        FirebaseDatabase.getInstance().getReference()
                 .child(getResources().getString(R.string.path_waitingRoom))
-                .child(myPlayer.getUserId());
-        databaseReference.removeValue();
+                .child(myPlayer.getUserId())
+                .removeValue();
     }
 
     @Override

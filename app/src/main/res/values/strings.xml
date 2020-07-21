@@ -48,4 +48,9 @@
     <string name="intent_my_player">myPlayerIntent</string>
     <string name="intent_active_game">activeGameIntent</string>
 
+    <string name="exit_game_message">Do you want to leave the game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="exit_game_notify">Your opponent has left the game</string>
+
 </resources>

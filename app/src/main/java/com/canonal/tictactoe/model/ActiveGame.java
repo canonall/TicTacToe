@@ -11,6 +11,7 @@ public class ActiveGame implements Parcelable {
     Player currentTurnPlayer;
     int roundCount;
     Move move;
+    boolean isLeftDuringGame;
 
     public ActiveGame() {
     }
@@ -55,12 +56,23 @@ public class ActiveGame implements Parcelable {
         this.currentTurnPlayer = currentTurnPlayer;
     }
 
+    public boolean isLeftDuringGame() {
+        return isLeftDuringGame;
+    }
+
+    public void setLeftDuringGame(boolean leftDuringGame) {
+        isLeftDuringGame = leftDuringGame;
+    }
+
+
+
     protected ActiveGame(Parcel in) {
         xPlayer = (XPlayer) in.readValue(XPlayer.class.getClassLoader());
         oPlayer = (OPlayer) in.readValue(OPlayer.class.getClassLoader());
         currentTurnPlayer = (Player) in.readValue(Player.class.getClassLoader());
         roundCount = in.readInt();
         move = (Move) in.readValue(Move.class.getClassLoader());
+        isLeftDuringGame = in.readByte() != 0x00;
     }
 
     @Override
@@ -75,6 +87,7 @@ public class ActiveGame implements Parcelable {
         dest.writeValue(currentTurnPlayer);
         dest.writeInt(roundCount);
         dest.writeValue(move);
+        dest.writeByte((byte) (isLeftDuringGame ? 0x01 : 0x00));
     }
 
     @SuppressWarnings("unused")

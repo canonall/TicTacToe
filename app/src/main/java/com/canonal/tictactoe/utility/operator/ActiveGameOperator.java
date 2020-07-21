@@ -1,11 +1,14 @@
 package com.canonal.tictactoe.utility.operator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.canonal.tictactoe.R;
+import com.canonal.tictactoe.activity.OnlineGameActivity;
+import com.canonal.tictactoe.activity.WaitingRoomActivity;
 import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.OPlayer;
 import com.canonal.tictactoe.model.Player;
@@ -15,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.List;
 
 public class ActiveGameOperator {
+
     public static ActiveGame getActiveGame(XPlayer xplayer, OPlayer oplayer) {
         ActiveGame activeGame = new ActiveGame();
         activeGame.setxPlayer(xplayer);
@@ -117,4 +121,5 @@ public class ActiveGameOperator {
                 .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
                 .removeValue();
     }
+
 }

@@ -31,35 +31,4 @@
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
-    <!--
-
-    <TextView
-        android:id="@+id/tv_accept"
-        style="@style/tv_dialog_yes_no"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="40dp"
-        android:layout_toEndOf="@id/tv_dialog_center"
-        android:background="@drawable/dialog_tv_yes_background"
-        android:text="Accept" />
-
-    <TextView
-        android:id="@+id/tv_dialog_center"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@id/tv_invite_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/tv_deny"
-        style="@style/tv_dialog_yes_no"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="20dp"
-        android:layout_toStartOf="@id/tv_dialog_center"
-        android:background="@drawable/dialog_tv_no_background"
-        android:text="Deny" />
-        -->
-
 </RelativeLayout>

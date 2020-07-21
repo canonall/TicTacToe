@@ -12,8 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.canonal.tictactoe.R;
+import com.canonal.tictactoe.dialog.GameExitDialog;
 import com.canonal.tictactoe.dialog.GameInviteDialog;
 import com.canonal.tictactoe.enums.InviteStatus;
+import com.canonal.tictactoe.listener.GameExitDialogListener;
 import com.canonal.tictactoe.listener.GameInviteDialogListener;
 import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.GameInvite;
@@ -36,7 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class OnlineGameActivity extends AppCompatActivity implements GameInviteDialogListener {
+public class OnlineGameActivity extends AppCompatActivity implements GameInviteDialogListener, GameExitDialogListener {
 
     private static final String TAG = "ONLINE_GAME";
 
@@ -71,6 +73,8 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private List<Button> buttonList;
     private ActiveGame activeGame;
     private Player myPlayer;
+
+    private DatabaseReference activeGameReference;
     private ValueEventListener activeGameEventListener;
 
     private DatabaseReference gameInviteReference;
@@ -89,7 +93,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         getPlayersInfo();
         printPlayerNames(activeGame);
 
-        DatabaseReference activeGameReference = FirebaseDatabase.getInstance().getReference()
+        activeGameReference = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.path_activeGame))
                 .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId());
 
@@ -114,12 +118,18 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                         }
 
                     }
+                    if (updatedActiveGame.isLeftDuringGame()) {
+
+                        Toast.makeText(getApplication(), getString(R.string.exit_game_notify), Toast.LENGTH_LONG).show();
+                        ActiveGameOperator.removeActiveGame(updatedActiveGame, getApplicationContext());
+
+                        removeDatabaseListeners();
+                        returnUserToWaitingRoom();
+
+                    }
 
                 }
-
-
                 activeGame = updatedActiveGame;
-
             }
 
             @Override
@@ -154,9 +164,8 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                                     " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
                                     .show();
 
-                            gameInviteReference.removeEventListener(gameInviteEventListener);
-                            startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
-                            finish();
+                            removeDatabaseListeners();
+                            returnUserToWaitingRoom();
                         }
 
                     }
@@ -172,7 +181,6 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         gameInviteReference.addValueEventListener(gameInviteEventListener);
 
     }
-
 
     private void click(final Button btn) {
 
@@ -389,10 +397,8 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
         ActiveGameOperator.removeActiveGame(activeGame, this);
 
-        gameInviteReference.removeEventListener(gameInviteEventListener);
-
-        startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
-        finish();
+        removeDatabaseListeners();
+        returnUserToWaitingRoom();
 
     }
 
@@ -408,11 +414,11 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
 
         //listen changes with reference
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+        activeGameReference = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.path_activeGame))
                 .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId());
 
-        databaseReference.addValueEventListener(activeGameEventListener);
+        activeGameReference.addValueEventListener(activeGameEventListener);
 
         printPlayerNames(activeGame);
 
@@ -428,6 +434,50 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private void printPlayerNames(ActiveGame activeGame) {
         tvPlayer1Name.setText(getString(R.string.player1_name, activeGame.getxPlayer().getPlayer().getUsername()));
         tvPlayer2Name.setText(getString(R.string.player2_name, activeGame.getoPlayer().getPlayer().getUsername()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        createGameExitDialog(myPlayer);
+    }
+
+    private void createGameExitDialog(Player exitPlayer) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        GameExitDialog gameExitDialog = new GameExitDialog(this, activeGame);
+        fragmentManager.beginTransaction().add(gameExitDialog, "GameExit Dialog").commitAllowingStateLoss();
+        gameExitDialog.setCancelable(false);
+
+    }
+
+
+    @Override
+    public void exitGame(ActiveGame activeGame) {
+
+        activeGame.setLeftDuringGame(true);
+
+        FirebaseDatabase.getInstance().getReference()
+                .child(getString(R.string.path_activeGame))
+                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
+                .setValue(activeGame);
+
+        removeDatabaseListeners();
+        returnUserToWaitingRoom();
+    }
+
+    @Override
+    public void stayGame() {
+        //Do nothing
+    }
+
+    private void returnUserToWaitingRoom() {
+        startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
+        finish();
+    }
+
+    private void removeDatabaseListeners() {
+        activeGameReference.removeEventListener(activeGameEventListener);
+        gameInviteReference.removeEventListener(gameInviteEventListener);
     }
 
     private void setTagToButtons() {
