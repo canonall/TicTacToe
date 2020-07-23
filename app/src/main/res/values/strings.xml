@@ -7,10 +7,10 @@
     <string name="x">X</string>
     <string name="o">O</string>
 
-    <string name="player1_wins">Player 1 Wins!</string>
-    <string name="player2_wins">Player 2 Wins!</string>
+    <string name="player1_wins">Player 1 wins!</string>
+    <string name="player2_wins">Player 2 wins!</string>
     <string name="draw">Tie Game!</string>
-    <string name="player_online_wins">%1$s Wins!</string>
+    <string name="player_online_wins">%1$s wins!</string>
 
 
     <string name="play_again">Play Again</string>

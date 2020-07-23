@@ -4,6 +4,6 @@ import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.Player;
 
 public interface GameExitDialogListener {
-    void exitGame(ActiveGame activeGame);
+    void exitGame();
     void stayGame();
 }

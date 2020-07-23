@@ -46,7 +46,7 @@ public class GameExitDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        gameExitDialogListener.exitGame(activeGame);
+                        gameExitDialogListener.exitGame();
                     }
                 });
 

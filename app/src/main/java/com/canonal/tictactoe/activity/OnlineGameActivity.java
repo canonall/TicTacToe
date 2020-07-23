@@ -74,6 +74,9 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private ActiveGame activeGame;
     private Player myPlayer;
 
+    private boolean amITheLeaver = true;
+    private boolean isGameInviteOperation = false;
+
     private DatabaseReference activeGameReference;
     private ValueEventListener activeGameEventListener;
 
@@ -120,10 +123,13 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                     }
                     if (updatedActiveGame.isLeftDuringGame()) {
 
-                        Toast.makeText(getApplication(), getString(R.string.exit_game_notify), Toast.LENGTH_LONG).show();
-                        ActiveGameOperator.removeActiveGame(updatedActiveGame, getApplicationContext());
+                        if (amITheLeaver) {
+                            Toast.makeText(getApplication(), getString(R.string.exit_game_notify), Toast.LENGTH_LONG).show();
+                            ActiveGameOperator.removeActiveGame(updatedActiveGame, getApplicationContext());
+                            amITheLeaver = false;
+                        }
 
-                        removeDatabaseListeners();
+                        //removeDatabaseListeners();
                         returnUserToWaitingRoom();
 
                     }
@@ -161,9 +167,10 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                         } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
 
                             Toast.makeText(getApplicationContext(),
-                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
+                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_SHORT)
                                     .show();
 
+                            isGameInviteOperation=true;
                             removeDatabaseListeners();
                             returnUserToWaitingRoom();
                         }
@@ -397,6 +404,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
         ActiveGameOperator.removeActiveGame(activeGame, this);
 
+        isGameInviteOperation=true;
         removeDatabaseListeners();
         returnUserToWaitingRoom();
 
@@ -438,30 +446,29 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     @Override
     public void onBackPressed() {
-        createGameExitDialog(myPlayer);
+        createGameExitDialog();
     }
 
-    private void createGameExitDialog(Player exitPlayer) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    private void createGameExitDialog() {
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
         GameExitDialog gameExitDialog = new GameExitDialog(this, activeGame);
         fragmentManager.beginTransaction().add(gameExitDialog, "GameExit Dialog").commitAllowingStateLoss();
         gameExitDialog.setCancelable(false);
 
     }
 
-
     @Override
-    public void exitGame(ActiveGame activeGame) {
+    public void exitGame() {
 
-        activeGame.setLeftDuringGame(true);
+        // activeGame.setLeftDuringGame(true);
+        // ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
 
-        FirebaseDatabase.getInstance().getReference()
-                .child(getString(R.string.path_activeGame))
-                .child(activeGame.getoPlayer().getPlayer().getUserId() + activeGame.getxPlayer().getPlayer().getUserId())
-                .setValue(activeGame);
+        // amITheLeaver = true;
 
-        removeDatabaseListeners();
+        // removeDatabaseListeners();
+        // returnUserToWaitingRoom();
+
         returnUserToWaitingRoom();
     }
 
@@ -562,5 +569,27 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     public void onBtn22Clicked() {
         btn22.setTag("22");
         click(btn22);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+
+        if (!isGameInviteOperation) {
+            if (amITheLeaver) {
+                amITheLeaver = false;
+                activeGame.setLeftDuringGame(true);
+                ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
+            }
+            removeDatabaseListeners();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
+        returnUserToWaitingRoom();
     }
 }

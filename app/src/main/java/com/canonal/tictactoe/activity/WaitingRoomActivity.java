@@ -60,6 +60,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         setContentView(R.layout.activity_waiting_room);
         ButterKnife.bind(this);
 
+        Log.d(TAG, "onCreate: ");
         getUserInfoFromDialog();
 
     }
@@ -247,8 +248,9 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
         ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
         GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
-        WaitingRoomOperator.removePlayersFromWaitingRoom(activeGame, this);
-
+        // WaitingRoomOperator.removePlayersFromWaitingRoom(activeGame, this);
+        // WaitingRoomOperator.removePlayerFromWaitingRoom(xPlayer.getPlayer(), this);
+        //WaitingRoomOperator.removePlayerFromWaitingRoom(oPlayer.getPlayer(), this);
         createMatch(activeGame);
     }
 
@@ -259,7 +261,6 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         Log.d(TAG, "rejectGameInvite: invite rejected by invitee" + gameInvite.getInvitee().getPlayer().getUsername());
     }
 
-
     private void createMatch(ActiveGame activeGame) {
 
         //prevents listener to listen from another activity
@@ -269,6 +270,43 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         intent.putExtra(getString(R.string.intent_my_player), myPlayer);
         intent.putExtra(getString(R.string.intent_active_game), activeGame);
         startActivity(intent);
+        finish();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+        WaitingRoomOperator.removePlayerFromWaitingRoom(myPlayer, this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
+        addToWaitingRoom(myPlayer);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }
