@@ -73,9 +73,12 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private List<Button> buttonList;
     private ActiveGame activeGame;
     private Player myPlayer;
+    private GameInvite mGameInvite;
+    private GameInviteDialog gameInviteDialog;
 
     private boolean amITheLeaver = true;
     private boolean isGameInviteOperation = false;
+    private boolean isGameInviteDialogShowed = false;
 
     private DatabaseReference activeGameReference;
     private ValueEventListener activeGameEventListener;
@@ -121,6 +124,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                         }
 
                     }
+
                     if (updatedActiveGame.isLeftDuringGame()) {
 
                         if (amITheLeaver) {
@@ -170,7 +174,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                                     " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_SHORT)
                                     .show();
 
-                            isGameInviteOperation=true;
+                            isGameInviteOperation = true;
                             removeDatabaseListeners();
                             returnUserToWaitingRoom();
                         }
@@ -249,7 +253,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
             //check if there is a winner
             if (isThereAWinner()) {
-                pronounceWinner(updatedActiveGame);
+                announceWinner(updatedActiveGame);
             }
             //if roundCount is 9, then draw
             //else continue;
@@ -315,7 +319,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         return false;
     }
 
-    private void pronounceWinner(ActiveGame updatedActiveGame) {
+    private void announceWinner(ActiveGame updatedActiveGame) {
 
         if (ActiveGameOperator.checkCurrentTurnPlayer(updatedActiveGame.getoPlayer().getPlayer(), updatedActiveGame)) {
 
@@ -373,24 +377,22 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     private void createGameInviteDialog(GameInvite gameInvite) {
 
+        mGameInvite = gameInvite;
+        isGameInviteDialogShowed = true;
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        GameInviteDialog gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
+        gameInviteDialog = new GameInviteDialog(this, gameInvite, false);
         fragmentManager.beginTransaction().add(gameInviteDialog, "GameInvite Dialog").commitAllowingStateLoss();
         gameInviteDialog.setCancelable(false);
 
     }
 
-    private void getPlayersInfo() {
-
-        Intent intent = getIntent();
-        myPlayer = intent.getParcelableExtra((getString(R.string.intent_my_player)));
-        activeGame = intent.getParcelableExtra((getString(R.string.intent_active_game)));
-
-    }
-
     @Override
     public void acceptGameInvite(GameInvite gameInvite) {
+        //dialog closed
+        isGameInviteDialogShowed = false;
+
         restartActiveGame();
         GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
 
@@ -398,13 +400,15 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     @Override
     public void rejectGameInvite(GameInvite gameInvite) {
+        //dialog closed
+        isGameInviteDialogShowed = false;
 
         Log.d(TAG, "rejectGameInvite: invite rejected by invitee" + gameInvite.getInvitee().getPlayer().getUsername());
 
         GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
         ActiveGameOperator.removeActiveGame(activeGame, this);
 
-        isGameInviteOperation=true;
+        isGameInviteOperation = true;
         removeDatabaseListeners();
         returnUserToWaitingRoom();
 
@@ -485,6 +489,14 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private void removeDatabaseListeners() {
         activeGameReference.removeEventListener(activeGameEventListener);
         gameInviteReference.removeEventListener(gameInviteEventListener);
+    }
+
+    private void getPlayersInfo() {
+
+        Intent intent = getIntent();
+        myPlayer = intent.getParcelableExtra((getString(R.string.intent_my_player)));
+        activeGame = intent.getParcelableExtra((getString(R.string.intent_active_game)));
+
     }
 
     private void setTagToButtons() {
@@ -575,6 +587,19 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
+
+        if (isGameInviteDialogShowed) {
+
+            FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
+                    .child(mGameInvite.getInvitee().getPlayer().getUserId())
+                    .child(getResources().getString(R.string.path_inviteStatus))
+                    .setValue(InviteStatus.REJECTED);
+
+            GameInviteOperator.removePlayersFromGameInvite(mGameInvite, this);
+
+            gameInviteDialog.dismiss();
+            isGameInviteDialogShowed = false;
+        }
 
         if (!isGameInviteOperation) {
             if (amITheLeaver) {
