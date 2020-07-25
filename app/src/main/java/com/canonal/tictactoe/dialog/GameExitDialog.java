@@ -12,20 +12,14 @@ import androidx.fragment.app.DialogFragment;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.listener.GameExitDialogListener;
-import com.canonal.tictactoe.listener.GameInviteDialogListener;
-import com.canonal.tictactoe.model.ActiveGame;
-import com.canonal.tictactoe.model.Player;
 
 public class GameExitDialog extends DialogFragment {
 
     private Context context;
     private GameExitDialogListener gameExitDialogListener;
-    private ActiveGame activeGame;
 
-
-    public GameExitDialog(Context context, ActiveGame activeGame) {
+    public GameExitDialog(Context context) {
         this.context = context;
-        this.activeGame = activeGame;
     }
 
     @NonNull

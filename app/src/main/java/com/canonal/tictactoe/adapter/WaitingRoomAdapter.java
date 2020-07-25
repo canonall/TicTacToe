@@ -18,9 +18,9 @@ import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Invitee;
 import com.canonal.tictactoe.model.Inviter;
 import com.canonal.tictactoe.model.Player;
+import com.canonal.tictactoe.utility.operator.FirebaseOperator;
 import com.canonal.tictactoe.utility.operator.GameInviteOperator;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+
 
 
 import java.util.ArrayList;
@@ -78,14 +78,14 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
         TextView tvPlayerName;
         TextView tvInvite;
         RvWaitingRoomItemClickListener rvWaitingRoomItemClickListener;
-        Resources resources;
+        Context context;
 
         public ViewHolder(View itemView, RvWaitingRoomItemClickListener rvWaitingRoomItemClickListener) {
             super(itemView);
 
             tvPlayerName = itemView.findViewById(R.id.tv_player_name);
             tvInvite = itemView.findViewById(R.id.tv_invite);
-            resources = layoutInflater.getContext().getResources();
+            context = layoutInflater.getContext();
 
             this.rvWaitingRoomItemClickListener = rvWaitingRoomItemClickListener;
             itemView.setOnClickListener(this);
@@ -98,9 +98,7 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
                     Inviter inviterPlayer = GameInviteOperator.getInviterPlayer(myPlayer);
                     GameInvite gameInvite = GameInviteOperator.getGameInvite(inviteePlayer, inviterPlayer, InviteStatus.WAITING);
 
-                    FirebaseDatabase.getInstance().getReference().child(resources.getString(R.string.path_gameInvite))
-                            .child(gameInvite.getInvitee().getPlayer().getUserId())
-                            .setValue(gameInvite);
+                    FirebaseOperator.pushGameInvite(gameInvite, context);
 
                     Log.d("INVITE POSITION", "onClick: invitee player "
                             + gameInvite.getInvitee().getPlayer().getUserId() + " " + gameInvite.getInvitee().getPlayer().getUsername());

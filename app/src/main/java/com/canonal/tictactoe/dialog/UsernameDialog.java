@@ -1,5 +1,6 @@
 package com.canonal.tictactoe.dialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -17,7 +18,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.listener.UsernameDialogListener;
 import com.canonal.tictactoe.utility.Constants;
-import com.canonal.tictactoe.utility.operator.EmptyFieldOperator;
+import com.canonal.tictactoe.utility.operator.TextOperator;
 import com.canonal.tictactoe.utility.operator.SharedPreferenceOperator;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -62,7 +63,7 @@ public class UsernameDialog extends AppCompatDialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         //Return to main menu
-                        getActivity().finish();
+
 
                     }
                 })
@@ -91,22 +92,35 @@ public class UsernameDialog extends AppCompatDialogFragment {
         //Check whether userName is empty, if it is empty
         //don't close the dialog, if not save userName to SharedPreference
         final AlertDialog dialog = (AlertDialog) getDialog();
+
         if (dialog != null) {
-            Button positiveButton = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+
+            Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     String userId = firebaseAuth.getUid();
                     String username = etUserName.getText().toString();
 
-                    if (EmptyFieldOperator.isFieldEmpty(username)) {
-                        EmptyFieldOperator.printEmptyError(etUserName, context);
+                    if (TextOperator.isFieldEmpty(username)) {
+                        TextOperator.printEmptyFieldError(etUserName, context);
 
                     } else {
                         usernameDialogListener.createNewPlayer(userId, username);
                         SharedPreferenceOperator.saveData(username, context);
                         dialog.dismiss();
                     }
+                }
+            });
+
+            Button negativeButton = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            negativeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    usernameDialogListener.cancelUsernameDialog();
+                    dialog.dismiss();
+
                 }
             });
         }

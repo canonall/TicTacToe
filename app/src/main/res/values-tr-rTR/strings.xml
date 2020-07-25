@@ -18,6 +18,7 @@
 
     <string name="user_name">Kullanıcı adı</string>
     <string name="please_user_name">Lütfen kullanıcı adı giriniz</string>
+    <string name="fill_empty_field">Lütfen bu alanı doldurunuz</string>
     <string name="ok">Tamam</string>
     <string name="cancel">Iptal</string>
 

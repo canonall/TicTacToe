@@ -1,15 +1,10 @@
 package com.canonal.tictactoe.utility.operator;
 
-import android.content.Context;
-
-import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.enums.InviteStatus;
-import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Invitee;
 import com.canonal.tictactoe.model.Inviter;
 import com.canonal.tictactoe.model.Player;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -80,12 +75,4 @@ public class GameInviteOperator {
                 && inviteStatus.equals(InviteStatus.REJECTED);
     }
 
-    public static void removePlayersFromGameInvite(GameInvite gameInvite, Context context) {
-
-        FirebaseDatabase.getInstance().getReference()
-                .child(context.getResources().getString(R.string.path_gameInvite))
-                .child(gameInvite.getInvitee().getPlayer().getUserId())
-                .removeValue();
-
-    }
 }

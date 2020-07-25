@@ -24,7 +24,9 @@ import com.canonal.tictactoe.model.Inviter;
 import com.canonal.tictactoe.model.Move;
 import com.canonal.tictactoe.model.Player;
 import com.canonal.tictactoe.utility.operator.ActiveGameOperator;
+import com.canonal.tictactoe.utility.operator.FirebaseOperator;
 import com.canonal.tictactoe.utility.operator.GameInviteOperator;
+import com.canonal.tictactoe.utility.operator.GameUiOperator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -129,7 +131,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
                         if (amITheLeaver) {
                             Toast.makeText(getApplication(), getString(R.string.exit_game_notify), Toast.LENGTH_LONG).show();
-                            ActiveGameOperator.removeActiveGame(updatedActiveGame, getApplicationContext());
+                            FirebaseOperator.removeActiveGame(updatedActiveGame, getApplicationContext());
                             amITheLeaver = false;
                         }
 
@@ -224,7 +226,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
             int roundCount = activeGame.getRoundCount();
             activeGame.setRoundCount(++roundCount);
 
-            ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
+            FirebaseOperator.pushActiveGame(activeGame, this);
 
         }
 
@@ -258,7 +260,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
             //if roundCount is 9, then draw
             //else continue;
             else if (updatedActiveGame.getRoundCount() == 9) {
-                callDraw();
+                callTieGame();
             }
 
         }
@@ -334,16 +336,16 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
         }
 
-        ActiveGameOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
+        GameUiOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 
     }
 
-    private void callDraw() {
+    private void callTieGame() {
 
         tvWinner.setText(getResources().getString(R.string.draw));
         tvWinner.setTextColor(getResources().getColor(R.color.drawGray));
 
-        ActiveGameOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
+        GameUiOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 
     }
 
@@ -394,7 +396,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         isGameInviteDialogShowed = false;
 
         restartActiveGame();
-        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+        FirebaseOperator.removeGameInvite(gameInvite, this);
 
     }
 
@@ -405,8 +407,8 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
         Log.d(TAG, "rejectGameInvite: invite rejected by invitee" + gameInvite.getInvitee().getPlayer().getUsername());
 
-        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
-        ActiveGameOperator.removeActiveGame(activeGame, this);
+        FirebaseOperator.removeGameInvite(gameInvite, this);
+        FirebaseOperator.removeActiveGame(activeGame, this);
 
         isGameInviteOperation = true;
         removeDatabaseListeners();
@@ -419,11 +421,11 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         resetGameBoard();
 
         //Delete previous activeGame
-        ActiveGameOperator.removeActiveGame(activeGame, this);
+        FirebaseOperator.removeActiveGame(activeGame, this);
 
         //Create new activeGame and push to Firebase
         activeGame = ActiveGameOperator.changeSides(activeGame, this);
-        ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
+        FirebaseOperator.pushActiveGame(activeGame, this);
 
         //listen changes with reference
         activeGameReference = FirebaseDatabase.getInstance().getReference()
@@ -437,10 +439,10 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     }
 
     private void resetGameBoard() {
-        ActiveGameOperator.enableButtons(buttonList);
-        ActiveGameOperator.resetButtonStatus(buttonList);
-        ActiveGameOperator.makeRestartInvisible(tvPlayAgain);
-        ActiveGameOperator.makeWinnerInvisible(tvWinner);
+        GameUiOperator.enableButtons(buttonList);
+        GameUiOperator.resetButtonStatus(buttonList);
+        GameUiOperator.makeRestartInvisible(tvPlayAgain);
+        GameUiOperator.makeWinnerInvisible(tvWinner);
     }
 
     private void printPlayerNames(ActiveGame activeGame) {
@@ -456,7 +458,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private void createGameExitDialog() {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        GameExitDialog gameExitDialog = new GameExitDialog(this, activeGame);
+        GameExitDialog gameExitDialog = new GameExitDialog(this);
         fragmentManager.beginTransaction().add(gameExitDialog, "GameExit Dialog").commitAllowingStateLoss();
         gameExitDialog.setCancelable(false);
 
@@ -464,15 +466,6 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     @Override
     public void exitGame() {
-
-        // activeGame.setLeftDuringGame(true);
-        // ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
-
-        // amITheLeaver = true;
-
-        // removeDatabaseListeners();
-        // returnUserToWaitingRoom();
-
         returnUserToWaitingRoom();
     }
 
@@ -497,6 +490,41 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         myPlayer = intent.getParcelableExtra((getString(R.string.intent_my_player)));
         activeGame = intent.getParcelableExtra((getString(R.string.intent_active_game)));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: OnlineGame ");
+
+        if (isGameInviteDialogShowed) {
+
+            FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
+                    .child(mGameInvite.getInvitee().getPlayer().getUserId())
+                    .child(getResources().getString(R.string.path_inviteStatus))
+                    .setValue(InviteStatus.REJECTED);
+
+            FirebaseOperator.removeGameInvite(mGameInvite, this);
+
+            gameInviteDialog.dismiss();
+            isGameInviteDialogShowed = false;
+        }
+
+        if (!isGameInviteOperation) {
+            if (amITheLeaver) {
+                amITheLeaver = false;
+                activeGame.setLeftDuringGame(true);
+                FirebaseOperator.pushActiveGame(activeGame, this);
+            }
+            removeDatabaseListeners();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: OnlineGame ");
+        returnUserToWaitingRoom();
     }
 
     private void setTagToButtons() {
@@ -581,40 +609,5 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     public void onBtn22Clicked() {
         btn22.setTag("22");
         click(btn22);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-
-        if (isGameInviteDialogShowed) {
-
-            FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
-                    .child(mGameInvite.getInvitee().getPlayer().getUserId())
-                    .child(getResources().getString(R.string.path_inviteStatus))
-                    .setValue(InviteStatus.REJECTED);
-
-            GameInviteOperator.removePlayersFromGameInvite(mGameInvite, this);
-
-            gameInviteDialog.dismiss();
-            isGameInviteDialogShowed = false;
-        }
-
-        if (!isGameInviteOperation) {
-            if (amITheLeaver) {
-                amITheLeaver = false;
-                activeGame.setLeftDuringGame(true);
-                ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
-            }
-            removeDatabaseListeners();
-        }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart: ");
-        returnUserToWaitingRoom();
     }
 }

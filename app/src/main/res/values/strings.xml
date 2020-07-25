@@ -20,6 +20,7 @@
 
     <string name="user_name">Username</string>
     <string name="please_user_name">Please enter a username</string>
+    <string name="fill_empty_field">Please fill this field</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 

@@ -115,12 +115,12 @@ public class GameActivity extends AppCompatActivity {
 
             //check if there is a winner
             if (checkForWin()) {
-                pronounceWinner(player1Turn);
+                announceWinner(player1Turn);
             }
             //if roundCount is 9, then draw
             //else continue;
             else if (roundCount == 9) {
-                callDraw();
+                callTieGame();
             }
 
         }
@@ -188,7 +188,7 @@ public class GameActivity extends AppCompatActivity {
         return false;
     }
 
-    private void pronounceWinner(boolean player1Turn) {
+    private void announceWinner(boolean player1Turn) {
 
         if (player1Turn) {
             //player1 wins
@@ -208,7 +208,7 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    private void callDraw() {
+    private void callTieGame() {
 
         tvWinner.setText(getResources().getString(R.string.draw));
         tvWinner.setTextColor(getResources().getColor(R.color.drawGray));

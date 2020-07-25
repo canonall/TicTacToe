@@ -26,6 +26,7 @@ import com.canonal.tictactoe.model.OPlayer;
 import com.canonal.tictactoe.model.Player;
 import com.canonal.tictactoe.model.XPlayer;
 import com.canonal.tictactoe.utility.operator.ActiveGameOperator;
+import com.canonal.tictactoe.utility.operator.FirebaseOperator;
 import com.canonal.tictactoe.utility.operator.GameInviteOperator;
 import com.canonal.tictactoe.utility.operator.WaitingRoomOperator;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,11 +53,14 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     RecyclerView rvWaitingRoomPlayers;
 
     private Player myPlayer;
+
     private DatabaseReference gameInviteReference;
     private ValueEventListener gameInviteListener;
 
     private boolean addedToWaitingRoom = false;
-    private boolean isGameInviteDialogShowed = false;
+    private boolean isGameInviteDialogOpen = false;
+    private boolean isUsernameDialogOpen = false;
+
     private GameInvite mGameInvite;
     private GameInviteDialog gameInviteDialog;
 
@@ -67,7 +71,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         ButterKnife.bind(this);
 
         Log.d(TAG, "onCreate: ");
-        getUserInfoFromDialog();
+        createUsernameDialog();
 
         gameInviteReference = FirebaseDatabase.getInstance().getReference().child(getString(R.string.path_gameInvite));
         gameInviteListener = new ValueEventListener() {
@@ -124,12 +128,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     }
 
-    private void addToWaitingRoom(final Player myPlayer) {
-        //get reference and add player to the database
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_waitingRoom));
-        databaseReference.child(myPlayer.getUserId()).child(getResources().getString(R.string.path_player)).setValue(myPlayer);
-        addedToWaitingRoom = true;
+    private void addToWaitingRoom(Player myPlayer) {
 
+        //add player to waitingRoom database
+        FirebaseOperator.pushPlayerToWaitingRoom(myPlayer, this);
+
+        addedToWaitingRoom = true;
         listAllAvailablePlayers(myPlayer);
 
     }
@@ -197,14 +201,12 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        FirebaseDatabase.getInstance().getReference()
-                .child(getResources().getString(R.string.path_waitingRoom))
-                .child(myPlayer.getUserId())
-                .removeValue();
+        FirebaseOperator.removePlayerFromWaitingRoom(myPlayer, this);
     }
 
     @Override
     public void createNewPlayer(String userId, String username) {
+        isUsernameDialogOpen = false;
 
         myPlayer = new Player();
         myPlayer.setUserId(userId);
@@ -217,7 +219,15 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
     }
 
-    private void getUserInfoFromDialog() {
+    @Override
+    public void cancelUsernameDialog() {
+        isUsernameDialogOpen = false;
+        finish();
+    }
+
+    private void createUsernameDialog() {
+
+        isUsernameDialogOpen = true;
 
         UsernameDialog usernameDialog = new UsernameDialog(this);
         usernameDialog.show(getSupportFragmentManager(), "Username Dialog");
@@ -228,7 +238,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     private void createGameInviteDialog(GameInvite gameInvite) {
 
         mGameInvite = gameInvite;
-        isGameInviteDialogShowed = true;
+        isGameInviteDialogOpen = true;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -248,23 +258,23 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     @Override
     public void acceptGameInvite(GameInvite gameInvite) {
 
-        isGameInviteDialogShowed = false;
+        isGameInviteDialogOpen = false;
 
         XPlayer xPlayer = ActiveGameOperator.getXPlayer(gameInvite.getInviter().getPlayer(), this);
         OPlayer oPlayer = ActiveGameOperator.getOPlayer(gameInvite.getInvitee().getPlayer(), this);
         ActiveGame activeGame = ActiveGameOperator.getActiveGame(xPlayer, oPlayer);
 
-        ActiveGameOperator.pushActiveGameToFirebase(activeGame, this);
-        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+        FirebaseOperator.pushActiveGame(activeGame, this);
+        FirebaseOperator.removeGameInvite(gameInvite, this);
         createMatch(activeGame);
     }
 
     @Override
     public void rejectGameInvite(GameInvite gameInvite) {
 
-        isGameInviteDialogShowed = false;
+        isGameInviteDialogOpen = false;
 
-        GameInviteOperator.removePlayersFromGameInvite(gameInvite, this);
+        FirebaseOperator.removeGameInvite(gameInvite, this);
         Log.d(TAG, "rejectGameInvite: invite rejected by invitee" + gameInvite.getInvitee().getPlayer().getUsername());
     }
 
@@ -285,17 +295,17 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
         super.onPause();
         Log.d(TAG, "onPause: ");
 
-        if (isGameInviteDialogShowed) {
+        if (isGameInviteDialogOpen) {
 
             FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
                     .child(mGameInvite.getInvitee().getPlayer().getUserId())
                     .child(getResources().getString(R.string.path_inviteStatus))
                     .setValue(InviteStatus.REJECTED);
 
-            GameInviteOperator.removePlayersFromGameInvite(mGameInvite, this);
+            FirebaseOperator.removeGameInvite(mGameInvite, this);
 
             gameInviteDialog.dismiss();
-            isGameInviteDialogShowed = false;
+            isGameInviteDialogOpen = false;
         }
 
         if (addedToWaitingRoom) {
@@ -308,31 +318,35 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: ");
+        Log.d(TAG, "onStop: WaitingRoom");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        Log.d(TAG, "onDestroy: wWaitingRoom");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
+        Log.d(TAG, "onResume: WaitingRoom");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "onRestart: ");
-        addToWaitingRoom(myPlayer);
-        addedToWaitingRoom = true;
+        Log.d(TAG, "onRestart: WaitingRoom");
+
+        if (!isUsernameDialogOpen) {
+            addToWaitingRoom(myPlayer);
+            addedToWaitingRoom = true;
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: WaitingRoom");
     }
 }
