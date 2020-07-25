@@ -98,13 +98,8 @@ public class WaitingRoomAdapter extends RecyclerView.Adapter<WaitingRoomAdapter.
                     Inviter inviterPlayer = GameInviteOperator.getInviterPlayer(myPlayer);
                     GameInvite gameInvite = GameInviteOperator.getGameInvite(inviteePlayer, inviterPlayer, InviteStatus.WAITING);
 
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
-                            .child(resources.getString(R.string.path_gameInvite));
-
-                    //todo
-                    //addOnSuccessListener
-
-                    databaseReference.child(gameInvite.getInvitee().getPlayer().getUserId())
+                    FirebaseDatabase.getInstance().getReference().child(resources.getString(R.string.path_gameInvite))
+                            .child(gameInvite.getInvitee().getPlayer().getUserId())
                             .setValue(gameInvite);
 
                     Log.d("INVITE POSITION", "onClick: invitee player "

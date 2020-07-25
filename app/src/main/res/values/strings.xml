@@ -4,8 +4,8 @@
     <string name="start">Start</string>
     <string name="about">About</string>
 
-    <string name="x">X</string>
-    <string name="o">O</string>
+    <string name="x" translatable="false">X</string>
+    <string name="o" translatable="false">O</string>
 
     <string name="player1_wins">Player 1 wins!</string>
     <string name="player2_wins">Player 2 wins!</string>
@@ -20,7 +20,6 @@
 
     <string name="user_name">Username</string>
     <string name="please_user_name">Please enter a username</string>
-
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
@@ -29,24 +28,24 @@
 
     <string name="invite">INVITE</string>
 
-    <string name="path_gameInvite">gameInvite</string>
-    <string name="path_activeGame">activeGame</string>
-    <string name="path_invitee">invitee</string>
-    <string name="path_inviter">inviter</string>
-    <string name="path_waitingRoom">waitingRoom</string>
-    <string name="path_player">player</string>
-    <string name="path_inviteStatus">inviteStatus</string>
-    <string name="path_move">move</string>
-    <string name="path_playAgainRequest">move</string>
+    <string name="path_gameInvite" translatable="false">gameInvite</string>
+    <string name="path_activeGame" translatable="false">activeGame</string>
+    <string name="path_invitee" translatable="false">invitee</string>
+    <string name="path_inviter" translatable="false">inviter</string>
+    <string name="path_waitingRoom" translatable="false">waitingRoom</string>
+    <string name="path_player" translatable="false">player</string>
+    <string name="path_inviteStatus" translatable="false">inviteStatus</string>
+    <string name="path_move" translatable="false">move</string>
+    <string name="path_playAgainRequest" translatable="false">move</string>
 
     <string name="invite_text">%1$s invites you to play!</string>
     <string name="play_again_text">%1$s wants to play again!</string>
 
-    <string name="player1_name">X: %1$s</string>
-    <string name="player2_name">O: %1$s</string>
+    <string name="player1_name" translatable="false">X: %1$s</string>
+    <string name="player2_name" translatable="false">O: %1$s</string>
 
-    <string name="intent_my_player">myPlayerIntent</string>
-    <string name="intent_active_game">activeGameIntent</string>
+    <string name="intent_my_player" translatable="false">myPlayerIntent</string>
+    <string name="intent_active_game" translatable="false">activeGameIntent</string>
 
     <string name="exit_game_message">Do you want to leave the game?</string>
     <string name="yes">Yes</string>

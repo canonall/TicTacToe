@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TicTacToe</string>
+
+    <string name="start">Başla</string>
+    <string name="about">Hakkında</string>
+
+    <string name="player1_wins">Player 1 kazandı!</string>
+    <string name="player2_wins">Player 2 kazandı!</string>
+    <string name="draw">Berabere!</string>
+    <string name="player_online_wins">%1$s kazandı!</string>
+
+
+    <string name="play_again">Tekrar Oyna</string>
+    <string name="play_online">Online</string>
+
+    <string name="players">Oyuncular</string>
+
+    <string name="user_name">Kullanıcı adı</string>
+    <string name="please_user_name">Lütfen kullanıcı adı giriniz</string>
+    <string name="ok">Tamam</string>
+    <string name="cancel">Iptal</string>
+
+    <string name="accept_game_invite">Kabul et</string>
+    <string name="reject_game_invite">Reddet</string>
+
+    <string name="invite">DAVET ET</string>
+
+    <string name="invite_text">%1$s seni oyuna davet ediyor!</string>
+    <string name="play_again_text">%1$s tekrar oynamak istiyor!</string>
+
+    <string name="exit_game_message">Oyundan çıkmak istiyor musun?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="exit_game_notify">Rakibin oyunu terk etti</string>
+</resources>
