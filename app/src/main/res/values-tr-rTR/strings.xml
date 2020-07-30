@@ -5,8 +5,8 @@
     <string name="start">Başla</string>
     <string name="about">Hakkında</string>
 
-    <string name="player1_wins">Player 1 kazandı!</string>
-    <string name="player2_wins">Player 2 kazandı!</string>
+    <string name="player1_wins">X kazandı!</string>
+    <string name="player2_wins">O kazandı!</string>
     <string name="draw">Berabere!</string>
     <string name="player_online_wins">%1$s kazandı!</string>
 

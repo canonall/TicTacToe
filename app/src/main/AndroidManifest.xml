@@ -11,10 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.OnlineGameActivity"></activity>
-        <activity android:name=".activity.WaitingRoomActivity" />
-        <activity android:name=".activity.GameActivity" />
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.OnlineGameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.WaitingRoomActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.GameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

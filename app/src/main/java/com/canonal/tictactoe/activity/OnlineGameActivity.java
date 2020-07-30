@@ -6,11 +6,9 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.dialog.GameExitDialog;
 import com.canonal.tictactoe.dialog.GameInviteDialog;
@@ -32,10 +30,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -71,7 +67,6 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     @BindView(R.id.tv_player2_name)
     TextView tvPlayer2Name;
 
-
     private List<Button> buttonList;
     private ActiveGame activeGame;
     private Player myPlayer;
@@ -88,7 +83,6 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private DatabaseReference gameInviteReference;
     private ValueEventListener gameInviteEventListener;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +93,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         setTagToButtons();
 
         getPlayersInfo();
-        printPlayerNames(activeGame);
+        printPlayerNames();
 
         activeGameReference = FirebaseDatabase.getInstance().getReference()
                 .child(getString(R.string.path_activeGame))
@@ -434,7 +428,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
         activeGameReference.addValueEventListener(activeGameEventListener);
 
-        printPlayerNames(activeGame);
+        printPlayerNames();
 
     }
 
@@ -445,7 +439,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         GameUiOperator.makeWinnerInvisible(tvWinner);
     }
 
-    private void printPlayerNames(ActiveGame activeGame) {
+    private void printPlayerNames() {
         tvPlayer1Name.setText(getString(R.string.player1_name, activeGame.getxPlayer().getPlayer().getUsername()));
         tvPlayer2Name.setText(getString(R.string.player2_name, activeGame.getoPlayer().getPlayer().getUsername()));
     }
@@ -499,9 +493,9 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
         if (isGameInviteDialogShowed) {
 
-            FirebaseDatabase.getInstance().getReference().child(getResources().getString(R.string.path_gameInvite))
+            FirebaseDatabase.getInstance().getReference().child(getString(R.string.path_gameInvite))
                     .child(mGameInvite.getInvitee().getPlayer().getUserId())
-                    .child(getResources().getString(R.string.path_inviteStatus))
+                    .child(getString(R.string.path_inviteStatus))
                     .setValue(InviteStatus.REJECTED);
 
             FirebaseOperator.removeGameInvite(mGameInvite, this);

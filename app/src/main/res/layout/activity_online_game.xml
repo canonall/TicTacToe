@@ -14,6 +14,7 @@
         android:layout_alignStart="@id/btn_00"
         android:layout_alignParentTop="true"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/brandont_text_medium"
         android:text="@string/player1_name" />
 
     <TextView
@@ -23,6 +24,7 @@
         android:layout_below="@id/tv_player1_name"
         android:layout_alignStart="@id/tv_player1_name"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/brandont_text_medium"
         android:text="@string/player2_name" />
 
     <TextView
@@ -32,6 +34,7 @@
         android:layout_above="@+id/btn_00"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
+        android:fontFamily="@font/brandont_text_medium"
         android:textSize="@dimen/tv_winner_text_size"
         android:visibility="gone" />
 
