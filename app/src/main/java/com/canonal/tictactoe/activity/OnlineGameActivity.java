@@ -6,9 +6,11 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.dialog.GameExitDialog;
 import com.canonal.tictactoe.dialog.GameInviteDialog;
@@ -25,13 +27,18 @@ import com.canonal.tictactoe.utility.operator.ActiveGameOperator;
 import com.canonal.tictactoe.utility.operator.FirebaseOperator;
 import com.canonal.tictactoe.utility.operator.GameInviteOperator;
 import com.canonal.tictactoe.utility.operator.GameUiOperator;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -83,11 +90,15 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private DatabaseReference gameInviteReference;
     private ValueEventListener gameInviteEventListener;
 
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_game);
         ButterKnife.bind(this);
+
+        initiateInterstitialAd();
 
         buttonList = addButtonsToList();
         setTagToButtons();
@@ -123,13 +134,14 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
                     if (updatedActiveGame.isLeftDuringGame()) {
 
+                        //TODO iki taraf için de çalışıyor
                         if (amITheLeaver) {
                             Toast.makeText(getApplication(), getString(R.string.exit_game_notify), Toast.LENGTH_LONG).show();
                             FirebaseOperator.removeActiveGame(updatedActiveGame, getApplicationContext());
                             amITheLeaver = false;
                         }
 
-                        //removeDatabaseListeners();
+
                         returnUserToWaitingRoom();
 
                     }
@@ -331,7 +343,6 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         }
 
         GameUiOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
-
     }
 
     private void callTieGame() {
@@ -469,8 +480,16 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     }
 
     private void returnUserToWaitingRoom() {
-        startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
-        finish();
+        showInterstitialAd();
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                startActivity(new Intent(OnlineGameActivity.this, WaitingRoomActivity.class));
+                finish();
+            }
+
+        });
+
     }
 
     private void removeDatabaseListeners() {
@@ -519,6 +538,20 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         super.onRestart();
         Log.d(TAG, "onRestart: OnlineGame ");
         returnUserToWaitingRoom();
+    }
+
+    private void initiateInterstitialAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+    }
+
+    private void showInterstitialAd() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            Log.d(TAG, getString(R.string.ad_load_failed));
+        }
     }
 
     private void setTagToButtons() {

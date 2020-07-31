@@ -53,4 +53,6 @@
     <string name="no">No</string>
     <string name="exit_game_notify">Your opponent has left the game</string>
 
+    <string name="ad_load_failed" translatable="false">The interstitial wasn\'t loaded yet.</string>
+
 </resources>
