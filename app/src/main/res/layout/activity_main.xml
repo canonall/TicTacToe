@@ -8,38 +8,44 @@
     tools:context=".activity.MainActivity">
 
     <ImageView
-        android:id="@+id/logo"
+        android:id="@+id/iv_logo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="55dp"
         android:src="@drawable/logo_tic_tac_toe" />
 
-    <TextView
-        android:id="@+id/tv_start"
-        style="@style/tv_main"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="50dp"
-        android:text="@string/start" />
+    <RelativeLayout
+        android:id="@+id/rl_btn_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_logo"
+        android:layout_marginTop="120dp">
 
-    <TextView
-        android:id="@+id/tv_online"
-        style="@style/tv_main"
-        android:layout_below="@+id/tv_start"
-        android:layout_alignStart="@+id/tv_start"
-        android:layout_alignEnd="@id/tv_start"
-        android:layout_marginTop="15dp"
-        android:text="@string/play_online" />
-    <TextView
-        android:id="@+id/tv_about"
-        style="@style/tv_main"
-        android:layout_below="@+id/tv_online"
-        android:layout_alignStart="@+id/tv_start"
-        android:layout_alignEnd="@id/tv_start"
-        android:layout_marginTop="15dp"
-        android:text="@string/about" />
+        <TextView
+            android:id="@+id/tv_start"
+            style="@style/tv_main"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="@string/start" />
 
+        <TextView
+            android:id="@+id/tv_online"
+            style="@style/tv_main"
+            android:layout_below="@+id/tv_start"
+            android:layout_alignStart="@+id/tv_start"
+            android:layout_alignEnd="@id/tv_start"
+            android:layout_marginTop="15dp"
+            android:text="@string/play_online" />
 
+        <TextView
+            android:id="@+id/tv_about"
+            style="@style/tv_main"
+            android:layout_below="@+id/tv_online"
+            android:layout_alignStart="@+id/tv_start"
+            android:layout_alignEnd="@id/tv_start"
+            android:layout_marginTop="15dp"
+            android:text="@string/about" />
+
+    </RelativeLayout>
 </RelativeLayout>

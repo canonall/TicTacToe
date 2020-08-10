@@ -542,6 +542,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
 
     private void initiateInterstitialAd() {
         mInterstitialAd = new InterstitialAd(this);
+        //TODO when publish change unitId with original
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
     }
