@@ -10,5 +10,13 @@
     <dimen name="tv_play_again_text_size">18sp</dimen>
     <dimen name="btn_text_size">40sp</dimen>
 
+    <dimen name="main_screen_logo_button_margin">150dp</dimen>
+
+    <dimen name="start_logo_middle_anim">150%</dimen>
+    <dimen name="translate_logo_up_anim">-150%</dimen>
+
+    <dimen name="start_buttons_bottom_anim">170%</dimen>
+    <dimen name="translate_buttons_up_anim">-170%</dimen>
+
 
 </resources>

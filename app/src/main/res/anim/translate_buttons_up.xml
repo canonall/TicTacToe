@@ -3,5 +3,5 @@
     <translate
         android:duration="3000"
         android:startOffset="3000"
-        android:toYDelta="-170%" />
+        android:toYDelta="@dimen/translate_buttons_up_anim" />
 </set>

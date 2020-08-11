@@ -19,8 +19,8 @@
         android:id="@+id/rl_btn_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/iv_logo"
-        android:layout_marginTop="120dp">
+        android:layout_below="@+id/iv_logo"
+        android:layout_marginTop="@dimen/main_screen_logo_button_margin">
 
         <TextView
             android:id="@+id/tv_start"

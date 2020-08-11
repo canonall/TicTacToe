@@ -2,6 +2,6 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate
         android:duration="3000"
-        android:fromYDelta="170%"
-        android:toYDelta="170%" />
+        android:fromYDelta="@dimen/start_buttons_bottom_anim"
+        android:toYDelta="@dimen/start_buttons_bottom_anim" />
 </set>

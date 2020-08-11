@@ -26,10 +26,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MAIN_ACTIVITY";
 
     private Animation rotateClockwiseAnimation;
-    private Animation startFromMiddle;
-    private Animation translateToTop;
-    private Animation startFromBottom;
-    private Animation translateFromBottom;
+    private Animation startLogoMiddle;
+    private Animation translateLogoUp;
+    private Animation startButtonsBottom;
+    private Animation translateButtonsUp;
+
 
     @BindView(R.id.tv_start)
     TextView tvStart;
@@ -55,25 +56,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        rotateClockwiseAnimation = AnimationUtils.loadAnimation(this, R.anim.rotation_clockwise);
-        startFromMiddle = AnimationUtils.loadAnimation(this, R.anim.start_from_middle);
-        translateToTop = AnimationUtils.loadAnimation(this, R.anim.translate_to_top);
-        startFromBottom = AnimationUtils.loadAnimation(this, R.anim.start_from_bottom);
-        translateFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
+        loadAnimations();
 
         AnimationSet animationSetLogo = new AnimationSet(true);
-        AnimationSet animationSetRelativeLayout = new AnimationSet(true);
-
         animationSetLogo.addAnimation(rotateClockwiseAnimation);
-        animationSetLogo.addAnimation(startFromMiddle);
-        animationSetLogo.addAnimation(translateToTop);
+        animationSetLogo.addAnimation(startLogoMiddle);
+        animationSetLogo.addAnimation(translateLogoUp);
 
-        animationSetRelativeLayout.addAnimation(startFromBottom);
-        animationSetRelativeLayout.addAnimation(translateFromBottom);
+        AnimationSet animationSetRelativeLayout = new AnimationSet(true);
+        animationSetRelativeLayout.addAnimation(startButtonsBottom);
+        animationSetRelativeLayout.addAnimation(translateButtonsUp);
 
         ivLogo.startAnimation(animationSetLogo);
         rlBtnContainer.startAnimation(animationSetRelativeLayout);
-
 
     }
 
@@ -89,5 +84,13 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.tv_online)
     public void onTvOnlineClicked() {
         startActivity(new Intent(MainActivity.this, WaitingRoomActivity.class));
+    }
+
+    private void loadAnimations() {
+        rotateClockwiseAnimation = AnimationUtils.loadAnimation(this, R.anim.rotation_clockwise);
+        startLogoMiddle = AnimationUtils.loadAnimation(this, R.anim.start_logo_middle);
+        startButtonsBottom = AnimationUtils.loadAnimation(this, R.anim.start_buttons_bottom);
+        translateLogoUp = AnimationUtils.loadAnimation(this, R.anim.translate_logo_up);
+        translateButtonsUp = AnimationUtils.loadAnimation(this, R.anim.translate_buttons_up);
     }
 }

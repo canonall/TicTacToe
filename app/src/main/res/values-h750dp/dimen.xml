@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="main_screen_logo_button_margin">200dp</dimen>
+
+    <dimen name="start_logo_middle_anim">200%</dimen>
+    <dimen name="translate_logo_up_anim">-200%</dimen>
+
+    <dimen name="start_buttons_bottom_anim">250%</dimen>
+    <dimen name="translate_buttons_up_anim">-250%</dimen>
+
+</resources>
