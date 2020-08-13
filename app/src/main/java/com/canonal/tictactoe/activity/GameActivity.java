@@ -102,7 +102,7 @@ public class GameActivity extends AppCompatActivity {
 
         } else {
 
-            btn.setTextColor(getResources().getColor(R.color.colorAccentDemo));
+            btn.setTextColor(getResources().getColor(R.color.colorPrimary));
             btn.setText(getResources().getString(R.string.o));
 
         }
@@ -198,7 +198,7 @@ public class GameActivity extends AppCompatActivity {
         } else {
             //player2 wins
             tvWinner.setText(getResources().getString(R.string.player2_wins));
-            tvWinner.setTextColor(getResources().getColor(R.color.colorAccentDemo));
+            tvWinner.setTextColor(getResources().getColor(R.color.colorPrimary));
 
         }
 
@@ -211,7 +211,7 @@ public class GameActivity extends AppCompatActivity {
     private void callTieGame() {
 
         tvWinner.setText(getResources().getString(R.string.draw));
-        tvWinner.setTextColor(getResources().getColor(R.color.drawGray));
+        tvWinner.setTextColor(getResources().getColor(R.color.tieGame));
 
         disableButtons();
         makeRestartVisible();

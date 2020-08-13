@@ -4,10 +4,9 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="0"
-                android:endColor="#1799A8"
-                android:startColor="#47D5DE" />
-            <corners
-                android:radius="100dp"/>
+                android:endColor="@color/tv_end_color"
+                android:startColor="@color/tv_start_color" />
+            <corners android:radius="100dp" />
         </shape>
     </item>
 </layer-list>

@@ -8,6 +8,7 @@
         android:id="@+id/et_user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/brandon_text_medium"
         android:hint="@string/please_user_name"
         android:imeOptions="actionDone"
         android:maxLength="50"

@@ -243,7 +243,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         if (symbol.equals(getString(R.string.x))) {
             button.setTextColor(getResources().getColor(R.color.colorAccent));
         } else {
-            button.setTextColor(getResources().getColor(R.color.colorAccentDemo));
+            button.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         button.setText(symbol);
@@ -338,7 +338,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         } else {
             //OPlayer wins
             tvWinner.setText(getResources().getString(R.string.player_online_wins, activeGame.getoPlayer().getPlayer().getUsername()));
-            tvWinner.setTextColor(getResources().getColor(R.color.colorAccentDemo));
+            tvWinner.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
         }
 
@@ -348,7 +348,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
     private void callTieGame() {
 
         tvWinner.setText(getResources().getString(R.string.draw));
-        tvWinner.setTextColor(getResources().getColor(R.color.drawGray));
+        tvWinner.setTextColor(getResources().getColor(R.color.tieGame));
 
         GameUiOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 

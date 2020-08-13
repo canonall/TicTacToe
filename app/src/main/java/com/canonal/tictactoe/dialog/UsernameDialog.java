@@ -5,15 +5,21 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Typeface;
+import android.graphics.fonts.Font;
+import android.graphics.fonts.FontStyle;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.listener.UsernameDialogListener;
@@ -34,12 +40,11 @@ public class UsernameDialog extends AppCompatDialogFragment {
         this.context = context;
     }
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
 
         LayoutInflater layoutInflater = requireActivity().getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_user_name, null);
@@ -96,6 +101,7 @@ public class UsernameDialog extends AppCompatDialogFragment {
         if (dialog != null) {
 
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
+            positiveButton.setTextColor(getResources().getColor(R.color.colorAccent));
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,6 +121,7 @@ public class UsernameDialog extends AppCompatDialogFragment {
             });
 
             Button negativeButton = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+            negativeButton.setTextColor(getResources().getColor(R.color.colorPrimary));
             negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

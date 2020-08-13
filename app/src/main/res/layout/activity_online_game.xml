@@ -14,7 +14,7 @@
         android:layout_alignStart="@id/btn_00"
         android:layout_alignParentTop="true"
         android:layout_marginTop="20dp"
-        android:fontFamily="@font/brandont_text_medium"
+        android:fontFamily="@font/brandon_text_medium"
         android:text="@string/player1_name" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_below="@id/tv_player1_name"
         android:layout_alignStart="@id/tv_player1_name"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/brandont_text_medium"
+        android:fontFamily="@font/brandon_text_medium"
         android:text="@string/player2_name" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_above="@+id/btn_00"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
-        android:fontFamily="@font/brandont_text_medium"
+        android:fontFamily="@font/brandon_text_medium"
         android:textSize="@dimen/tv_winner_text_size"
         android:visibility="gone" />
 
@@ -128,45 +128,45 @@
 
     <View
         android:id="@+id/line_horizontal_1"
+        style="@style/line_game"
         android:layout_width="match_parent"
         android:layout_height="0.6dp"
         android:layout_above="@id/tv_center"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="@dimen/horizontal_line_margins"
-        android:background="@color/drawGray" />
+        android:layout_marginBottom="@dimen/horizontal_line_margins" />
 
 
     <View
         android:id="@+id/line_horizontal_2"
+        style="@style/line_game"
         android:layout_width="match_parent"
         android:layout_height="0.6dp"
         android:layout_below="@id/tv_center"
         android:layout_alignStart="@id/line_horizontal_1"
         android:layout_alignEnd="@id/line_horizontal_1"
-        android:layout_marginTop="@dimen/horizontal_line_margins"
-        android:background="@color/drawGray" />
+        android:layout_marginTop="@dimen/horizontal_line_margins" />
 
 
     <View
         android:id="@+id/line_vertical_1"
+        style="@style/line_game"
         android:layout_width="0.6dp"
         android:layout_height="match_parent"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="@dimen/vertical_line_margins"
         android:layout_marginBottom="120dp"
-        android:layout_toStartOf="@id/tv_center"
-        android:background="@color/drawGray" />
+        android:layout_toStartOf="@id/tv_center" />
 
     <View
         android:id="@+id/line_vertical_2"
+        style="@style/line_game"
         android:layout_width="0.6dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/line_vertical_1"
         android:layout_alignBottom="@id/line_vertical_1"
         android:layout_marginStart="@dimen/vertical_line_margins"
-        android:layout_toEndOf="@id/tv_center"
-        android:background="@color/drawGray" />
+        android:layout_toEndOf="@id/tv_center" />
 
     <TextView
         android:id="@+id/tv_play_again"

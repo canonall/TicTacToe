@@ -14,7 +14,7 @@ public class TextOperator {
 
     public static void printEmptyFieldError(EditText editText, Context context) {
         editText.setHint(context.getString(R.string.fill_empty_field));
-        editText.setHintTextColor(context.getResources().getColor(R.color.red));
+        editText.setHintTextColor(context.getResources().getColor(R.color.errorRed));
 
     }
 }

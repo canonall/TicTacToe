@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#50206c</color>
+    <color name="colorPrimaryDark">#240040</color>
+    <color name="colorAccent">#7f4b9b</color>
 
-    <color name="colorPrimaryDemo">#1799a8</color>
-    <color name="colorPrimaryDarkDemo">#006a79</color>
-    <color name="colorAccentDemo">#5ccada</color>
+    <color name="tv_start_color">@color/colorPrimary</color>
+    <color name="tv_end_color">@color/colorPrimary</color>
 
-   <!-- <color name="colorBackground">#32323B</color>-->
-    <color name="colorBackground">#424949</color>
-    <color name="drawGray">#B3B6B7</color>
+    <color name="colorBackground">#D7DBDD</color>
+    <color name="tieGame">#616A6B</color>
 
-    <color name="red">#A50424</color>
-    <color name="redInvite">#C91237</color>
+    <color name="errorRed">#FF0033</color>
+    <color name="inviteRed">#C91237</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>
