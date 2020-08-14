@@ -8,7 +8,7 @@
     <color name="tv_end_color">@color/colorPrimary</color>
 
     <color name="colorBackground">#D7DBDD</color>
-    <color name="tieGame">#616A6B</color>
+    <color name="tieGame">#515A5A</color>
 
     <color name="errorRed">#FF0033</color>
     <color name="inviteRed">#C91237</color>

@@ -26,7 +26,7 @@
         android:layout_marginEnd="15dp"
         android:fontFamily="@font/brandon_text_medium"
         android:text="@string/invite"
-        android:textColor="@color/inviteRed"
+        android:textColor="@color/colorAccent"
         android:textSize="16sp"
         android:textStyle="bold" />
 
