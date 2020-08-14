@@ -1,7 +1,6 @@
 package com.canonal.tictactoe.utility.operator;
 
 import android.content.Context;
-
 import com.canonal.tictactoe.R;
 import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.GameInvite;

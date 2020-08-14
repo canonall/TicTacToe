@@ -3,7 +3,6 @@ package com.canonal.tictactoe.utility.operator;
 import android.content.Context;
 import android.text.TextUtils;
 import android.widget.EditText;
-
 import com.canonal.tictactoe.R;
 
 public class TextOperator {

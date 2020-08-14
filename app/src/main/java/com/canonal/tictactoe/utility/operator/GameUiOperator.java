@@ -1,19 +1,10 @@
 package com.canonal.tictactoe.utility.operator;
 
-import android.content.Context;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.canonal.tictactoe.adapter.WaitingRoomAdapter;
-import com.canonal.tictactoe.model.Player;
-
 import java.util.List;
-import java.util.Set;
 
 public class GameUiOperator {
     public static void disableButtons(List<Button> buttons) {

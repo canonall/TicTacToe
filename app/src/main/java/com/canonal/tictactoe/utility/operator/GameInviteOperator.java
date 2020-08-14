@@ -5,7 +5,6 @@ import com.canonal.tictactoe.model.GameInvite;
 import com.canonal.tictactoe.model.Invitee;
 import com.canonal.tictactoe.model.Inviter;
 import com.canonal.tictactoe.model.Player;
-
 import java.util.List;
 
 public class GameInviteOperator {

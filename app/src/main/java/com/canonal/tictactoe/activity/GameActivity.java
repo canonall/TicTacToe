@@ -1,19 +1,30 @@
 package com.canonal.tictactoe.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.canonal.tictactoe.R;
+import com.canonal.tictactoe.utility.operator.GameUiOperator;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GameActivity extends AppCompatActivity {
+
+    private static final String TAG = "LOCAL GAME ACTIVITY";
 
     @BindView(R.id.btn_00)
     Button btn00;
@@ -38,59 +49,23 @@ public class GameActivity extends AppCompatActivity {
     @BindView(R.id.tv_play_again)
     TextView tvPlayAgain;
 
+    private List<Button> buttonList;
+
     private int roundCount = 0;
     private boolean player1Turn = true;
+
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         ButterKnife.bind(this);
-    }
 
-    @OnClick(R.id.btn_00)
-    public void onBtn00Clicked() {
-        click(btn00);
-    }
+        initiateInterstitialAd();
 
-    @OnClick(R.id.btn_01)
-    public void onBtn01Clicked() {
-        click(btn01);
-    }
+        buttonList = addButtonsToList();
 
-    @OnClick(R.id.btn_02)
-    public void onBtn02Clicked() {
-        click(btn02);
-    }
-
-    @OnClick(R.id.btn_10)
-    public void onBtn10Clicked() {
-        click(btn10);
-    }
-
-    @OnClick(R.id.btn_11)
-    public void onBtn11Clicked() {
-        click(btn11);
-    }
-
-    @OnClick(R.id.btn_12)
-    public void onBtn12Clicked() {
-        click(btn12);
-    }
-
-    @OnClick(R.id.btn_20)
-    public void onBtn20Clicked() {
-        click(btn20);
-    }
-
-    @OnClick(R.id.btn_21)
-    public void onBtn21Clicked() {
-        click(btn21);
-    }
-
-    @OnClick(R.id.btn_22)
-    public void onBtn22Clicked() {
-        click(btn22);
     }
 
     private void click(Button btn) {
@@ -131,7 +106,6 @@ public class GameActivity extends AppCompatActivity {
         //user cant click the same button
         btn.setEnabled(false);
     }
-
 
     private boolean checkForWin() {
 
@@ -202,9 +176,7 @@ public class GameActivity extends AppCompatActivity {
 
         }
 
-        disableButtons();
-        makeRestartVisible();
-        makeWinnerVisible();
+        GameUiOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 
     }
 
@@ -213,81 +185,114 @@ public class GameActivity extends AppCompatActivity {
         tvWinner.setText(getResources().getString(R.string.draw));
         tvWinner.setTextColor(getResources().getColor(R.color.tieGame));
 
-        disableButtons();
-        makeRestartVisible();
-        makeWinnerVisible();
+        GameUiOperator.showGameFinishedUi(buttonList, tvPlayAgain, tvWinner);
 
     }
 
 
     @OnClick(R.id.tv_play_again)
     public void onTvPlayAgainClicked() {
+        resetGameBoard();
+    }
 
-        enableButtons();
-        resetButtonStatus();
-        makeRestartInvisible();
-        makeWinnerInvisible();
+    private void resetGameBoard() {
+        GameUiOperator.enableButtons(buttonList);
+        GameUiOperator.resetButtonStatus(buttonList);
+        GameUiOperator.makeRestartInvisible(tvPlayAgain);
+        GameUiOperator.makeWinnerInvisible(tvWinner);
 
         roundCount = 0;
         player1Turn = true;
     }
 
-    private void makeRestartVisible() {
-        tvPlayAgain.setVisibility(View.VISIBLE);
-    }
+    private List<Button> addButtonsToList() {
 
-    private void makeRestartInvisible() {
-        tvPlayAgain.setVisibility(View.GONE);
+        List<Button> buttonList = new ArrayList<>();
+        buttonList.add(btn00);
+        buttonList.add(btn01);
+        buttonList.add(btn02);
+        buttonList.add(btn10);
+        buttonList.add(btn11);
+        buttonList.add(btn12);
+        buttonList.add(btn20);
+        buttonList.add(btn21);
+        buttonList.add(btn22);
 
-    }
-
-    private void makeWinnerInvisible() {
-        tvWinner.setVisibility(View.GONE);
-    }
-
-    private void makeWinnerVisible() {
-        tvWinner.setVisibility(View.VISIBLE);
-    }
-
-    private void disableButtons() {
-
-        btn00.setEnabled(false);
-        btn01.setEnabled(false);
-        btn02.setEnabled(false);
-        btn10.setEnabled(false);
-        btn11.setEnabled(false);
-        btn12.setEnabled(false);
-        btn20.setEnabled(false);
-        btn21.setEnabled(false);
-        btn22.setEnabled(false);
+        return buttonList;
 
     }
 
-    private void enableButtons() {
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showInterstitialAd();
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                startActivity(new Intent(GameActivity.this, MainActivity.class));
+                finish();
+            }
 
-        btn00.setEnabled(true);
-        btn01.setEnabled(true);
-        btn02.setEnabled(true);
-        btn10.setEnabled(true);
-        btn11.setEnabled(true);
-        btn12.setEnabled(true);
-        btn20.setEnabled(true);
-        btn21.setEnabled(true);
-        btn22.setEnabled(true);
-
+        });
     }
 
-    private void resetButtonStatus() {
+    private void initiateInterstitialAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        //TODO when publish change unitId with original
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+    }
 
-        btn00.setText("");
-        btn01.setText("");
-        btn02.setText("");
-        btn10.setText("");
-        btn11.setText("");
-        btn12.setText("");
-        btn20.setText("");
-        btn21.setText("");
-        btn22.setText("");
+    private void showInterstitialAd() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            Log.d(TAG, getString(R.string.ad_load_failed));
+        }
+    }
 
+    @OnClick(R.id.btn_00)
+    public void onBtn00Clicked() {
+        click(btn00);
+    }
+
+    @OnClick(R.id.btn_01)
+    public void onBtn01Clicked() {
+        click(btn01);
+    }
+
+    @OnClick(R.id.btn_02)
+    public void onBtn02Clicked() {
+        click(btn02);
+    }
+
+    @OnClick(R.id.btn_10)
+    public void onBtn10Clicked() {
+        click(btn10);
+    }
+
+    @OnClick(R.id.btn_11)
+    public void onBtn11Clicked() {
+        click(btn11);
+    }
+
+    @OnClick(R.id.btn_12)
+    public void onBtn12Clicked() {
+        click(btn12);
+    }
+
+    @OnClick(R.id.btn_20)
+    public void onBtn20Clicked() {
+        click(btn20);
+    }
+
+    @OnClick(R.id.btn_21)
+    public void onBtn21Clicked() {
+        click(btn21);
+    }
+
+    @OnClick(R.id.btn_22)
+    public void onBtn22Clicked() {
+        click(btn22);
     }
 }

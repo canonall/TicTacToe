@@ -2,7 +2,6 @@ package com.canonal.tictactoe.utility.operator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.canonal.tictactoe.utility.Constants;
 
 import static android.content.Context.MODE_PRIVATE;

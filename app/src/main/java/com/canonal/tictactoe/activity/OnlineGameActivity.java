@@ -1,8 +1,7 @@
 package com.canonal.tictactoe.activity;
 
-import android.app.AlertDialog;
+
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.canonal.tictactoe.R;
@@ -48,7 +46,7 @@ import butterknife.OnClick;
 
 public class OnlineGameActivity extends AppCompatActivity implements GameInviteDialogListener, GameExitDialogListener {
 
-    private static final String TAG = "ONLINE_GAME";
+    private static final String TAG = "ONLINE_GAME_ACTIVITY";
 
     @BindView(R.id.btn_00)
     Button btn00;
@@ -104,7 +102,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         initiateInterstitialAd();
 
         buttonList = addButtonsToList();
-        setTagToButtons();
+        //setTagToButtons();
 
         getPlayersInfo();
         printPlayerNames();
@@ -558,7 +556,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         }
     }
 
-    private void setTagToButtons() {
+   /* private void setTagToButtons() {
         btn00.setTag("00");
         btn01.setTag("01");
         btn02.setTag("02");
@@ -569,7 +567,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         btn21.setTag("21");
         btn22.setTag("22");
 
-    }
+    }*/
 
     private List<Button> addButtonsToList() {
 

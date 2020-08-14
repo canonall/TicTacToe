@@ -7,9 +7,6 @@ import com.canonal.tictactoe.model.ActiveGame;
 import com.canonal.tictactoe.model.OPlayer;
 import com.canonal.tictactoe.model.Player;
 import com.canonal.tictactoe.model.XPlayer;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
 
 public class ActiveGameOperator {
 
