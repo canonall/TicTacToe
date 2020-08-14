@@ -26,6 +26,7 @@
 
     <string name="accept_game_invite">Accept</string>
     <string name="reject_game_invite">Reject</string>
+    <string name="reject_request">has rejected your request</string>
 
     <string name="invite">INVITE</string>
 

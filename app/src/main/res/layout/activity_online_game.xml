@@ -15,7 +15,9 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/brandon_text_medium"
-        android:text="@string/player1_name" />
+        android:text="@string/player1_name"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_player2_name"
@@ -25,7 +27,9 @@
         android:layout_alignStart="@id/tv_player1_name"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/brandon_text_medium"
-        android:text="@string/player2_name" />
+        android:text="@string/player2_name"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_winner"

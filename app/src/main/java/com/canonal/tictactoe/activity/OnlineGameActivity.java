@@ -102,7 +102,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         initiateInterstitialAd();
 
         buttonList = addButtonsToList();
-        //setTagToButtons();
+        setTagToButtons();
 
         getPlayersInfo();
         printPlayerNames();
@@ -180,7 +180,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
                         } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
 
                             Toast.makeText(getApplicationContext(),
-                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_SHORT)
+                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " " + getString(R.string.reject_request), Toast.LENGTH_SHORT)
                                     .show();
 
                             isGameInviteOperation = true;
@@ -244,7 +244,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         if (symbol.equals(getString(R.string.x))) {
             button.setTextColor(getResources().getColor(R.color.colorAccent));
         } else {
-            button.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            button.setTextColor(getResources().getColor(R.color.colorPrimary));
         }
 
         button.setText(symbol);
@@ -339,7 +339,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         } else {
             //OPlayer wins
             tvWinner.setText(getResources().getString(R.string.player_online_wins, activeGame.getoPlayer().getPlayer().getUsername()));
-            tvWinner.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            tvWinner.setTextColor(getResources().getColor(R.color.colorPrimary));
 
         }
 
@@ -556,7 +556,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         }
     }
 
-   /* private void setTagToButtons() {
+    private void setTagToButtons() {
         btn00.setTag("00");
         btn01.setTag("01");
         btn02.setTag("02");
@@ -567,7 +567,7 @@ public class OnlineGameActivity extends AppCompatActivity implements GameInviteD
         btn21.setTag("21");
         btn22.setTag("22");
 
-    }*/
+    }
 
     private List<Button> addButtonsToList() {
 

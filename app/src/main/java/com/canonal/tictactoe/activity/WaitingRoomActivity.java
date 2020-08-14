@@ -113,7 +113,7 @@ public class WaitingRoomActivity extends AppCompatActivity implements RvWaitingR
 
                         } else if (GameInviteOperator.isMyInviteRejected(gameInvite, myPlayer)) {
                             Toast.makeText(getApplicationContext(),
-                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " has rejected your request", Toast.LENGTH_LONG)
+                                    " " + gameInvite.getInvitee().getPlayer().getUsername() + " " + getString(R.string.reject_request), Toast.LENGTH_LONG)
                                     .show();
                         }
                         break;
