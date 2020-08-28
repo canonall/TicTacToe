@@ -238,8 +238,10 @@ public class GameActivity extends AppCompatActivity {
 
     private void initiateInterstitialAd() {
         mInterstitialAd = new InterstitialAd(this);
-        //TODO when publish change unitId with original
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        // when publish change unitId with original
+        // originalID: ca-app-pub-8799259961389460/7518905599
+        // demoId: ca-app-pub-3940256099942544/1033173712
+        mInterstitialAd.setAdUnitId("ca-app-pub-8799259961389460/7518905599");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
     }
 
