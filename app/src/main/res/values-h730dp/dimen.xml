@@ -5,6 +5,6 @@
     <dimen name="start_logo_middle_anim">230%</dimen>
     <dimen name="translate_logo_up_anim">-230%</dimen>
 
-    <dimen name="start_buttons_bottom_anim">250%</dimen>
-    <dimen name="translate_buttons_up_anim">-250%</dimen>
+    <dimen name="start_buttons_bottom_anim">270%</dimen>
+    <dimen name="translate_buttons_up_anim">-270%</dimen>
 </resources>
