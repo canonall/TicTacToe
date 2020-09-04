@@ -10,7 +10,6 @@
     <string name="draw">Berabere!</string>
     <string name="player_online_wins">%1$s kazandı!</string>
 
-
     <string name="play_again">Tekrar Oyna</string>
     <string name="play_online">Online</string>
 
@@ -26,7 +25,6 @@
     <string name="reject_game_invite">Reddet</string>
     <string name="reject_request">davetinizi reddetti</string>
 
-
     <string name="invite">DAVET ET</string>
 
     <string name="invite_text">%1$s seni oyuna davet ediyor!</string>
@@ -36,4 +34,6 @@
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="exit_game_notify">Rakibin oyunu terk etti</string>
+
+    <string name="about_explain">Bu uygulama Can Önal tarafından hazırlanmıştır. İletişim için onalcan20@gmail.com adresini kullanabilirsiniz.</string>
 </resources>

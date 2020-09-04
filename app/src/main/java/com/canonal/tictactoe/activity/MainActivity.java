@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.tv_about)
     public void onTvAboutClicked() {
+        startActivity(new Intent(MainActivity.this, AboutActivity.class));
     }
 
     @OnClick(R.id.tv_online)

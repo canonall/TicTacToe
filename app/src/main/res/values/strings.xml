@@ -12,7 +12,6 @@
     <string name="draw">Tie Game!</string>
     <string name="player_online_wins">%1$s wins!</string>
 
-
     <string name="play_again">Play Again</string>
     <string name="play_online">Online</string>
 
@@ -55,5 +54,7 @@
     <string name="exit_game_notify">Your opponent has left the game</string>
 
     <string name="ad_load_failed" translatable="false">The interstitial wasn\'t loaded yet.</string>
+
+    <string name="about_explain">This app was created by Can Önal. For further communication please contact onalcan20@gmail.com </string>
 
 </resources>
